@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoSQL Project</title>
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'shared.html' %}
+    <section id="content">
+		<main>
+			<div class="table-data">
+				<div class="order">
+					<div class="head">
+						<h3>Liste des abonnées</h3>
+						<i class='bx bx-search' ></i>
+						<!-- <i class='bx bx-filter' ></i> -->
+					</div>
+					<table>
+						<thead>
+							<tr>
+								<th>Prénom et Nom</th>
+								<th>Adresse</th>
+								<th>Date d'inscription</th>
+                                <th>Liste d'Emprunts</th>
+                                <th>Historique d'Emprunts</th>
+							</tr>
+						</thead>
+						<tbody>
+                            {% for abonne in abonnes %}
+							<tr>
+								<td>
+									<p>{{abonne.prenom}} {{abonne.nom}}</p>
+								</td>
+                                <td>{{abonne.adresse}}</td>
+								<td>{{abonne.datedinscription}}</td>
+                                <td>{{abonne.listedemprunts}}</td>
+                                <td>{{abonne.historiquedemprunts}}</td>
+								<!-- <td><span class="status completed">Completed</span></td> -->
+							</tr>
+                            {% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<!-- <div class="todo">
+					<div class="head">
+						<h3>Todos</h3>
+						<i class='bx bx-plus' ></i>
+						<i class='bx bx-filter' ></i>
+					</div>
+					<ul class="todo-list">
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+					</ul>
+                </div> -->
+			</div>
+        </main>
+    </section>
+
+</body>
+</html>
