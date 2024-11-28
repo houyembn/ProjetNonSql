@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NoSQL Project</title>
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <!-- Link to the CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -13,6 +15,45 @@
     <section id="content">
 		<main>
 			<div class="table-data">
+				<div class="form-container">
+					<div class="head">
+						<h3>Formulaire</h3>
+					</div>
+					<form id="abonneForm" action="/abonne" method="POST">
+						<div class="form-group">
+							<label for="nom">Nom</label>
+							<input type="text" id="nom" placeholder="Nom" name="nom" required>
+						</div>
+						<div class="form-group">
+							<label for="prenom">Prénom</label>
+							<input type="text" id="prenom" placeholder="Prénom" name="prenom" required>
+						</div>
+						<div class="form-group">
+							<label for="email">Email</label>
+							<input type="text" id="email" placeholder="email"  name="email">
+						</div>
+						<div class="form-group">
+							<label for="adresse">Adresse</label>
+							<input type="text" id="adresse" placeholder="Adresse" name="adresse" required>
+						</div>
+						<div class="form-group">
+							<label for="datedinscription">Date d'inscription</label>
+							<input type="date" id="datedinscription"  name="datedinscription">
+						</div>
+						<div class="form-group">
+							<label for="listedemprunts">Liste d'Emprunts</label>
+							<input type="text" id="listedemprunts" placeholder="Liste d'Emprunts" name="listedemprunts" required>
+						</div>
+						<div class="form-group">
+							<label for="historiquedemprunts">Historique d'Emprunts</label>
+							<input type="text" id="historiquedemprunts" placeholder="Historique d'Emprunts" name="historiquedemprunts" required>
+						</div>
+						<button type="submit">Ajouter</button>
+					</form>
+				</div>
+				
+					
+
 				<div class="order">
 					<div class="head">
 						<h3>Liste des abonnées</h3>
@@ -23,10 +64,12 @@
 						<thead>
 							<tr>
 								<th>Prénom et Nom</th>
+								<th>Email</th>
 								<th>Adresse</th>
 								<th>Date d'inscription</th>
                                 <th>Liste d'Emprunts</th>
                                 <th>Historique d'Emprunts</th>
+								<th>Order</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -35,10 +78,22 @@
 								<td>
 									<p>{{abonne.prenom}} {{abonne.nom}}</p>
 								</td>
+								<td>{{abonne.email}}</td>
                                 <td>{{abonne.adresse}}</td>
 								<td>{{abonne.datedinscription}}</td>
                                 <td>{{abonne.listedemprunts}}</td>
                                 <td>{{abonne.historiquedemprunts}}</td>
+								<td>
+									<!-- Buttons in the new column -->
+									<a href="/abonne/{{ abonne.email }}" class="btn btn-danger" title="Delete">
+										<i class="fa fa-trash"></i> <!-- Red delete icon -->
+									</a>
+									
+									<a href="/update/{{ abonne.id }}" class="btn btn-success" title="Update">
+										<i class="fa fa-edit"></i> <!-- Green update icon -->
+									</a>
+								</td>
+							</tr>
 								<!-- <td><span class="status completed">Completed</span></td> -->
 							</tr>
                             {% endfor %}

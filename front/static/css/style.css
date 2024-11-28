@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
 
+
 * {
 	margin: 0;
 	padding: 0;
@@ -548,6 +549,85 @@ body {
 #content main .table-data .todo .todo-list li:last-child {
 	margin-bottom: 0;
 }
+
+.form-container {
+    width: 100%;
+    padding: 20px;
+}
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.head h3 {
+    font-size: 24px;
+}
+
+.head i {
+    cursor: pointer;
+}
+
+.form-list {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 25px; /* Increase padding for a bigger button */
+    background-color: #3C91E6; /* Change to a more attractive color (blue) */
+    color: white;
+    border: none;
+    border-radius: 12px; /* Add rounded corners */
+    font-size: 14px; /* Increase font size */
+    cursor: pointer;
+    display: block; /* Ensure the button takes up a block level to center it */
+    margin-left: auto; /* Center the button horizontally */
+    margin-right: auto; /* Center the button horizontally */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue for the hover effect */
+}
+/* Styling the action buttons */
+.btn {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    margin-right: 5px;
+}
+
+.btn-danger {
+    background-color: red;
+}
+
+.btn-success {
+    background-color: green;
+}
+
+
+
 
 
 
