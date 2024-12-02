@@ -54,52 +54,7 @@
 				
 					
 
-				<div class="order">
-					<div class="head">
-						<h3>Liste des abonnées</h3>
-						<i class='bx bx-search' ></i>
-						<!-- <i class='bx bx-filter' ></i> -->
-					</div>
-					<table>
-						<thead>
-							<tr>
-								<th>Prénom et Nom</th>
-								<th>Email</th>
-								<th>Adresse</th>
-								<th>Date d'inscription</th>
-                                <th>Liste d'Emprunts</th>
-                                <th>Historique d'Emprunts</th>
-								<th>Order</th>
-							</tr>
-						</thead>
-						<tbody>
-                            {% for abonne in abonnes %}
-							<tr>
-								<td>
-									<p>{{abonne.prenom}} {{abonne.nom}}</p>
-								</td>
-								<td>{{abonne.email}}</td>
-                                <td>{{abonne.adresse}}</td>
-								<td>{{abonne.datedinscription}}</td>
-                                <td>{{abonne.listedemprunts}}</td>
-                                <td>{{abonne.historiquedemprunts}}</td>
-								<td>
-									<!-- Buttons in the new column -->
-									<a href="/abonne/{{ abonne.email }}" class="btn btn-danger" title="Delete">
-										<i class="fa fa-trash"></i> <!-- Red delete icon -->
-									</a>
-									
-									<a href="/update/{{ abonne.id }}" class="btn btn-success" title="Update">
-										<i class="fa fa-edit"></i> <!-- Green update icon -->
-									</a>
-								</td>
-							</tr>
-								<!-- <td><span class="status completed">Completed</span></td> -->
-							</tr>
-                            {% endfor %}
-						</tbody>
-					</table>
-				</div>
+				
 				<!-- <div class="todo">
 					<div class="head">
 						<h3>Todos</h3>
@@ -132,6 +87,24 @@
 			</div>
         </main>
     </section>
-
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		function confirmDeletion(email) {
+		  Swal.fire({
+			title: 'Êtes-vous sûr ?',
+			text: "Cette action est irréversible !",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Oui, supprimer',
+			cancelButtonText: 'Annuler'
+		  }).then((result) => {
+			if (result.isConfirmed) {
+			  document.getElementById(`deleteForm-${email}`).submit();
+			}
+		  });
+		}
+	  </script>
 </body>
 </html>

@@ -32,6 +32,12 @@
                         <span class="text">Abonnées</span>
                     </a>
                 </li>
+				<li class="{% if request.path == '/AbonneeTable' %}active{% endif %}">
+                    <a href="{{ url_for('abonneestable') }}">
+                        <i class="bx bxs-group"></i>
+                        <span class="text">Liste des abonnées</span>
+                    </a>
+                </li>
             </ul>
             
 			<li>
