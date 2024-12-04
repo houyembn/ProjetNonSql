@@ -83,3 +83,11 @@ def create_abonne():
     # Return a success message
     return jsonify({"message": "Abonné créé avec succès !"}), 201
 
+
+@app.route('/AbonneeEmails')
+def abonnees_emails():
+    emails = list(db.abonne.find({}, {"_id": 0, "email": 1}))  
+    email_list = [email['email'] for email in emails]
+    print("Emails récupérés :", email_list)  # Afficher dans la console
+    return render_template('emprunt.html', emails=email_list)
+

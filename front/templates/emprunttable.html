@@ -18,7 +18,7 @@
 			<div class="table-data">
                 <div class="order">
 					<div class="head">
-						<h3>Liste des abonnés</h3>
+						<h3>Liste des emprunts</h3>
 						<div class="search-container">
 							<!-- Search inputs and icon -->
 							<div class="search-box">
@@ -27,42 +27,40 @@
 								<i class='bx bx-search'></i>
 							</div>
 					
-							<form action="{{ url_for('delete_all_abonnes') }}" method="post">
-								<button type="submit" onclick="return confirm('Voulez-vous vraiment supprimer tous les abonnés ?')" class="delete-btn">
-									Supprimer tous les abonnés
+							<form action="{{ url_for('delete_all_emprunts') }}" method="post">
+								<button type="submit" onclick="return confirm('Voulez-vous vraiment supprimer tous les emprunts ?')" class="delete-btn">
+									Supprimer tous les emprunts
 								</button>
 							</form>
 						</div>
 					</div>
 					
-					<table id="abonneTable">
+					<table id="empruntTable">
 						<thead>
 							<tr>
-								<th>Prénom et Nom</th>
-								<th>Email</th>
-								<th>Adresse</th>
-								<th>Date d'inscription</th>
-                                <th>Liste d'Emprunts</th>
-                                <th>Historique d'Emprunts</th>
+								<th>Liste des abonnes</th>
+								<th>Document emprunté</th>
+								<th>Date d'emprunt</th>
+								<th>Date de retour prévue</th>
+                                <th>Statut de l'emprunt</th>
 								<th>Order</th>
 							</tr>
 						</thead>
 						<tbody>
-                            {% for abonne in abonnes %}
+                            {% for emprunt in emprunts %}
 							<tr>
-								<td>
-									<br>{{abonne.prenom}}</br> {{abonne.nom}}</p>
+								<td><br>
+							{{emprunt.abonne}}
 								</td>
-								<td>{{abonne.email}}</td>
-                                <td>{{abonne.adresse}}</td>
-								<td>{{abonne.datedinscription}}</td>
-                                <td>{{abonne.listedemprunts}}</td>
-                                <td>{{abonne.historiquedemprunts}}</td>
+								<td>{{emprunt.documentemprunte}}</td>
+                                <td>{{emprunt.datedemprunt}}</td>
+								<td>{{emprunt.datederetour}}</td>
+                                <td>{{emprunt.statusemprunt}}</td>
 								<td>
 
 						<!-- Delete Form -->
-                        <form id="deleteForm-{{ abonne.email }}" action="/delete_abonne" method="POST" style="display:inline;">
-                            <input type="hidden" name="email" value="{{ abonne.email }}">
+                        <form id="deleteForm-{{ emprunt.idEmprunt }}" action="/delete_emprunt" method="POST" style="display:inline;">
+                            <input type="hidden" name="idEmprunt" value="{{ emprunt.idEmprunt }}">
                             <button
                                 class="btn btn-danger btn-sm"
                                 type="submit"
@@ -73,11 +71,11 @@
                         
 
 <!-- Update Form -->
-<form id="updateForm-{{ abonne.email }}" action="/update_abonne/{{ abonne.email }}" method="POST" style="display:inline;">
+<form id="updateForm-{{ emprunt.idEmprunt }}" action="/update_emprunt/{{ emprunt.idEmprunt}}" method="POST" style="display:inline;">
     <button 
         class="btn btn-success btn-sm" 
         type="button" 
-        onclick="showUpdateForm('{{ abonne.id }}', '{{ abonne.nom }}', '{{ abonne.prenom }}', '{{ abonne.email }}', '{{ abonne.adresse }}', '{{ abonne.datedinscription }}', '{{ abonne.listedemprunts }}', '{{ abonne.historiquedemprunts }}')">
+        onclick="showUpdateForm('{{ emprunt.listeabonne}}', '{{ emprunt.documentemprunté }}', '{{ emprunt.datedemprunt }}', '{{ emprunt.datederetourprévue }}', '{{ emprunt.statutdelemprunt}}')">
         <i class="fa fa-edit"></i>
     </button>
 </form>
@@ -127,36 +125,32 @@
 
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, listedemprunts, historiquedemprunts) {
+function showUpdateForm(id, listeabonne, documentemprunté, datedemprunt, datederetourprévue, datedinscription, statutdelemprunt) {
     let formattedDate = new Date(datedinscription).toISOString().split('T')[0];
 
     Swal.fire({
         title: '<h3 style="color: #3C91E6; margin-bottom: 20px;">Modifier Abonné</h3>',
         html: ` 
-            <form id="swal-update-form" action="/update_abonne/${email}" method="POST" class="text-left">
+            <form id="swal-update-form" action="/update_emprunt/${idEmprunt}" method="POST" class="text-left">
                 <div class="form-group mb-3">
-                    <label for="nom">Nom</label>
-                    <input type="text" name="nom" value="${nom}" class="form-control" placeholder="Nom" required>
+                    <label for="listeabonne">Liste des abonnes</label>
+                    <input type="text" name="listeabonne" value="${listeabonne}" class="form-control" placeholder="Liste des abonnes" required>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="prenom">Prénom</label>
-                    <input type="text" name="prenom" value="${prenom}" class="form-control" placeholder="Prénom" required>
+                    <label for="documentemprunté ">Document emprunté </label>
+                    <input type="text" name="documentemprunté " value="${documentemprunté }" class="form-control" placeholder="Document emprunté" required>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="adresse">Adresse</label>
-                    <input type="text" name="adresse" value="${adresse}" class="form-control" placeholder="Adresse" required>
+                    <label for="Date d'emprunt">datedemprunt</label>
+                    <input type="date" name="datedemprunt" value="${formattedDate}" class="form-control">
+                </div>
+				<div class="form-group mb-3">
+                    <label for="Date de retour prévue">datederetourprévue</label>
+                    <input type="date" name="datederetourprévue" value="${formattedDate}" class="form-control">
                 </div>
                 <div class="form-group mb-3">
-                    <label for="datedinscription">Date d'inscription</label>
-                    <input type="date" name="datedinscription" value="${formattedDate}" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="listedemprunts">Liste d'Emprunts</label>
-                    <input type="text" name="listedemprunts" value="${listedemprunts}" class="form-control" placeholder="Liste d'Emprunts" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="historiquedemprunts">Historique d'Emprunts</label>
-                    <input type="text" name="historiquedemprunts" value="${historiquedemprunts}" class="form-control" placeholder="Historique d'Emprunts" required>
+                    <label for="statutdelemprunt">Statut de l'emprunt</label>
+                    <input type="text" name="statutdelemprunt" value="${statutdelemprunt}" class="form-control" placeholder="Liste d'Emprunts" required>
                 </div>
                 <div style="justify-content: center; margin-top: 20px;">
                     <button type="submit" class="btn btn-primary">Mettre à jour</button>
@@ -183,7 +177,7 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
-		function confirmDeletion(email) {
+		function confirmDeletion(idEmprunt) {
 		  Swal.fire({
 			title: 'Êtes-vous sûr ?',
 			text: "Cette action est irréversible !",
@@ -195,7 +189,7 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
 			cancelButtonText: 'Annuler'
 		  }).then((result) => {
 			if (result.isConfirmed) {
-			  document.getElementById(`deleteForm-${email}`).submit();
+			  document.getElementById(`deleteForm-${idEmprunt}`).submit();
 			}
 		  });
 		}
@@ -205,7 +199,7 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
 	function filterTable() {
 		const searchName = document.getElementById("searchName").value.toLowerCase();
 		const searchDate = document.getElementById("searchDate").value;
-		const table = document.getElementById("abonneTable");
+		const table = document.getElementById("empruntTable");
 		const rows = table.getElementsByTagName("tr");
 	
 		for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header row

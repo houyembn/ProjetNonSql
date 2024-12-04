@@ -40,16 +40,28 @@
                 </li>
             </ul>
             
-			<li>
-				<a href="#">
+			<li class="{% if request.path == '/Document' %}active{% endif %}">
+				<a href="{{ url_for('documents') }}">
 					<i class='bx bxs-doughnut-chart' ></i>
 					<span class="text">Document</span>
 				</a>
 			</li>
-			<li>
-				<a href="#">
+			<li class="{% if request.path == '/DocumentTable' %}active{% endif %}">
+				<a href="{{ url_for('documentstable') }}">
+					<i class="bx bxs-group"></i>
+					<span class="text">Liste des documents</span>
+				</a>
+			</li>
+			<li class="{% if request.path == '/Emprunt' %}active{% endif %}">
+				<a href="{{ url_for('emprunts') }}">
 					<i class='bx bxs-shopping-bag-alt' ></i>
 					<span class="text">Emprunt</span>
+				</a>
+			</li>
+			<li class="{% if request.path == '/EmpruntTable' %}active{% endif %}">
+				<a href="{{ url_for('empruntstable') }}">
+					<i class='bx bxs-shopping-bag-alt' ></i>
+					<span class="text"> Liste des emprunts</span>
 				</a>
 			</li>
 			<!-- <li>

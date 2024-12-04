@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoSQL Project</title>
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'shared.html' %}
+    <section id="content">
+		<main>
+			<div class="table-data">
+				<div class="form-container">
+					<div class="head">
+						<h3>Formulaire</h3>
+					</div>
+					<form id="documentForm" action="/document" method="POST">
+                        <div class="form-group">
+                            <label for="titre">Titre</label>
+                            <input type="text" id="titre" placeholder="Titre" name="titre">
+                        </div>
+                        <div class="form-group">
+                            <label for="type_doc">Type</label>
+                            <select id="type_doc" name="type_doc" required>
+                                <option value="" disabled selected>Sélectionnez un type</option>
+                                <option value="livre">Livre</option>
+                                <option value="magazine">Magazine</option>
+                                <option value="journal">Journal</option>
+                            </select>                            
+                        </div>
+                        <div class="form-group">
+                            <label for="auteur">Auteur</label>
+                            <input type="text" id="auteur" placeholder="Auteur" name="auteur" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="datedepublication">Date de publication</label>
+                            <input type="date" id="datedepublication" name="datedepublication">
+                        </div>
+                        <div class="form-group">
+                            <label>Disponibilité du Document</label><br>
+                            <input type="radio" id="disponible" name="disponibilite" value="oui" required>
+                            <label for="disponible">Oui</label>
+                            <input type="radio" id="indisponible" name="disponibilite" value="non" required>
+                            <label for="indisponible">Non</label>
+                        </div>
+                        <button type="submit">Ajouter</button>
+                    </form>
+                    
+				</div>
+				
+					
+
+				
+				<!-- <div class="todo">
+					<div class="head">
+						<h3>Todos</h3>
+						<i class='bx bx-plus' ></i>
+						<i class='bx bx-filter' ></i>
+					</div>
+					<ul class="todo-list">
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+					</ul>
+                </div> -->
+			</div>
+        </main>
+    </section>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		function confirmDeletion(titre) {
+		  Swal.fire({
+			title: 'Êtes-vous sûr ?',
+			text: "Cette action est irréversible !",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Oui, supprimer',
+			cancelButtonText: 'Annuler'
+		  }).then((result) => {
+			if (result.isConfirmed) {
+			  document.getElementById(`deleteForm-${titre}`).submit();
+			}
+		  });
+		}
+	  </script>
+</body>
+</html>

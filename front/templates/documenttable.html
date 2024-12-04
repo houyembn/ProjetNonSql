@@ -1,0 +1,230 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoSQL Project</title>
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	
+
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'shared.html' %}
+    <section id="content">
+		<main>
+			<div class="table-data">
+                <div class="order">
+					<div class="head">
+						<h3>Liste des documents</h3>
+						<div class="search-container">
+							<!-- Search inputs and icon -->
+							<div class="search-box">
+								<input type="text" id="searchTitre" placeholder="Rechercher" onkeyup="filterTable()">
+								<input type="date" id="searchDate" onchange="filterTable()">
+								<i class='bx bx-search'></i>
+							</div>
+					
+							<form action="{{ url_for('delete_all_documents') }}" method="post">
+								<button type="submit" onclick="return confirm('Voulez-vous vraiment supprimer tous les documents ?')" class="delete-btn">
+									Supprimer tous les documents
+								</button>
+							</form>
+						</div>
+					</div>
+					
+					<table id="documentTable">
+						<thead>
+							<tr>
+								<th>Titre</th>
+								<th>Type</th>
+								<th>Auteur</th>
+								<th>Date de publication</th>
+                                <th>disponibilite</th>
+							</tr>
+						</thead>
+						<tbody>
+                            {% for document in documents %}
+							<tr>
+								<td><br>{{document.titre}}</td>
+								<td>{{document.type_doc}}</td>
+                                <td>{{document.auteur}}</td>
+								<td>{{document.datedepublication}}</td>
+                                <td>{{document.disponibilite}}</td>
+								<td>
+
+						<!-- Delete Form -->
+                        <form id="deleteForm-{{ document.titre }}" action="/delete_document" method="POST" style="display:inline;">
+                            <input type="hidden" name="titre" value="{{ document.titre }}">
+                            <button
+                                class="btn btn-danger btn-sm"
+                                type="submit"
+                                onclick="return confirm('Are you sure you want to delete this item?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        
+
+<!-- Update Form -->
+<form id="updateForm-{{ document.titre }}" action="/update_document/{{ document.titre }}" method="POST" style="display:inline;">
+    <button 
+        class="btn btn-success btn-sm" 
+        type="button" 
+        onclick="showUpdateForm('{{ document.id }}', '{{ document.titre }}','{{ document.type_doc }}', '{{ document.auteur }}', '{{ document.datedepublication }}', '{{ document.disponibilite }}')">
+        <i class="fa fa-edit"></i>
+    </button>
+</form>
+
+
+
+								</td>
+							</tr>
+								<!-- <td><span class="status completed">Completed</span></td> -->
+							</tr>
+                            {% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<!-- <div class="todo">
+					<div class="head">
+						<h3>Todos</h3>
+						<i class='bx bx-plus' ></i>
+						<i class='bx bx-filter' ></i>
+					</div>
+					<ul class="todo-list">
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Todo List</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+					</ul>
+                </div> -->
+			</div>
+        </main>
+    </section>
+
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function showUpdateForm(id, titre, type_doc, auteur, datedepublication ,disponibilite) {
+	console.log('Button clicked', { id, titre, type_doc, auteur, datedepublication, disponibilite });
+    let formattedDate = new Date(datedepublication).toISOString().split('T')[0];
+
+	
+
+    Swal.fire({
+        title: '<h3 style="color: #3C91E6; margin-bottom: 20px;">Modifier Document</h3>',
+        html: ` 
+           <form id="swal-update-form" action="/update_document/${titre}" method="POST" class="text-left">
+    <div class="form-group mb-3">
+        <label for="type_doc">Type</label>
+        <select id="type_doc" name="type_doc" class="form-control" required>
+            <option value="" disabled selected>Sélectionnez un type</option>
+            <option value="livre" ${type_doc === 'livre' ? 'selected' : ''}>Livre</option>
+            <option value="magazine" ${type_doc === 'magazine' ? 'selected' : ''}>Magazine</option>
+            <option value="journal" ${type_doc === 'journal' ? 'selected' : ''}>Journal</option>
+        </select>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="auteur">Auteur</label>
+        <input type="text" name="auteur" value="${auteur}" class="form-control" placeholder="Auteur" required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="datedepublication">Date de publication</label>
+        <input type="date" name="datedepublication" value="${formattedDate}" class="form-control">
+    </div>
+
+    <div class="form-group mb-3">
+    <label for="disponibilite">Disponibilité</label>
+    <select id="disponibilite" name="disponibilite" class="form-control" required>
+        <option value="" disabled selected>Sélectionnez la disponibilité</option>
+        <option value="oui" ${disponibilite === 'oui' ? 'selected' : ''}>Oui</option>
+        <option value="non" ${disponibilite === 'non' ? 'selected' : ''}>Non</option>
+    </select>
+</div>
+
+
+    <div style="justify-content: center; margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    </div>
+</form>
+
+        `,
+        showConfirmButton: false,
+        customClass: {
+            popup: 'swal2-popup-custom',
+        },
+        showCloseButton: true,
+    });
+}
+</script>
+
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		function confirmDeletion(titre) {
+		  Swal.fire({
+			title: 'Êtes-vous sûr ?',
+			text: "Cette action est irréversible !",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Oui, supprimer',
+			cancelButtonText: 'Annuler'
+		  }).then((result) => {
+			if (result.isConfirmed) {
+			  document.getElementById(`deleteForm-${titre}`).submit();
+			}
+		  });
+		}
+	  </script>
+
+<script>
+    function filterTable() {
+        const searchTitre = document.getElementById("searchTitre").value.toLowerCase().trim();  // Added trim to handle extra spaces
+        const searchDate = document.getElementById("searchDate").value;
+        const table = document.getElementById("documentTable");
+        const rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header row
+            const row = rows[i];
+            const titleCell = row.cells[0].textContent.trim().toLowerCase();  // Ensure trimming and case-insensitivity
+            const dateCell = row.cells[3].textContent.trim();  // Trim any extra spaces for date
+
+            // Filter by title
+            const matchesTitre = titleCell.includes(searchTitre);
+
+            // Filter by date (if a date is provided in the search)
+            const matchesDate = searchDate ? dateCell.includes(searchDate) : true;
+
+            // Display or hide the row based on the filters
+            if (matchesTitre && matchesDate) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+</script>
+	
+</body>
+</html>
