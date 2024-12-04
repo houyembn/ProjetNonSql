@@ -6,6 +6,7 @@
     <title>NoSQL Project</title>
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	
 
     <!-- Link to the CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -59,7 +60,7 @@
                         
 
 <!-- Update Form -->
-<form action="/update_abonne/{{ abonne.email }}" method="POST" style="display:inline;">
+<form id="updateForm-{{ abonne.email }}" action="/update_abonne/{{ abonne.email }}" method="POST" style="display:inline;">
     <button 
         class="btn btn-success btn-sm" 
         type="button" 
@@ -112,51 +113,55 @@
 
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, listedemprunts, historiquedemprunts) {
-    // Si la date n'est pas déjà au format 'YYYY-MM-DD', vous pouvez la reformater ici
-    let formattedDate = new Date(datedinscription).toISOString().split('T')[0]; // Format: YYYY-MM-DD
-    
+function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, listedemprunts, historiquedemprunts) {
+    let formattedDate = new Date(datedinscription).toISOString().split('T')[0];
+
     Swal.fire({
-        title: 'Modifier Abonné',
-        html: `
-            <form id="updateForm" action="/update/${id}" method="POST">
-                <div class="form-group">
+        title: '<h3 style="color: #3C91E6; margin-bottom: 20px;">Modifier Abonné</h3>',
+        html: ` 
+            <form id="swal-update-form" action="/update_abonne/${email}" method="POST" class="text-left">
+                <div class="form-group mb-3">
                     <label for="nom">Nom</label>
-                    <input type="text" id="nom" name="nom" value="${nom}" class="swal2-input" placeholder="Nom" required>
+                    <input type="text" name="nom" value="${nom}" class="form-control" placeholder="Nom" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="prenom">Prénom</label>
-                    <input type="text" id="prenom" name="prenom" value="${prenom}" class="swal2-input" placeholder="Prénom" required>
+                    <input type="text" name="prenom" value="${prenom}" class="form-control" placeholder="Prénom" required>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="text" id="email" name="email" value="${email}" class="swal2-input" placeholder="Email" required>
-                </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="adresse">Adresse</label>
-                    <input type="text" id="adresse" name="adresse" value="${adresse}" class="swal2-input" placeholder="Adresse" required>
+                    <input type="text" name="adresse" value="${adresse}" class="form-control" placeholder="Adresse" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="datedinscription">Date d'inscription</label>
-                    <input type="date" id="datedinscription" name="datedinscription" value="${formattedDate}" class="swal2-input">
+                    <input type="date" name="datedinscription" value="${formattedDate}" class="form-control">
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="listedemprunts">Liste d'Emprunts</label>
-                    <input type="text" id="listedemprunts" name="listedemprunts" value="${listedemprunts}" class="swal2-input" placeholder="Liste d'Emprunts" required>
+                    <input type="text" name="listedemprunts" value="${listedemprunts}" class="form-control" placeholder="Liste d'Emprunts" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="historiquedemprunts">Historique d'Emprunts</label>
-                    <input type="text" id="historiquedemprunts" name="historiquedemprunts" value="${historiquedemprunts}" class="swal2-input" placeholder="Historique d'Emprunts" required>
+                    <input type="text" name="historiquedemprunts" value="${historiquedemprunts}" class="form-control" placeholder="Historique d'Emprunts" required>
+                </div>
+                <div style="justify-content: center; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
                 </div>
             </form>
         `,
-        showCancelButton: true,
-        confirmButtonText: 'Mettre à jour',
-        preConfirm: () => {
-            document.getElementById('updateForm').submit();
+        showConfirmButton: false,
+        customClass: {
+            popup: 'swal2-popup-custom',
         }
     });
 }
+
+
+
+
+
+
+
 
 </script>
 
