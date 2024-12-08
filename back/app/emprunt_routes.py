@@ -30,49 +30,49 @@ def delete_emprunt(idEmprunt):
     db.emprunt.delete_one({"idEmprunt": idEmprunt})
     return jsonify({"message": "Emprunt supprimé avec succès !"}), 200
 
-@app.route('/emprunt', methods=['POST'])
-def create_emprunt():
+# @app.route('/emprunt', methods=['POST'])
+# def create_emprunt():
 
-     # Get the JSON data from the request
-    data = request.json
+#      # Get the JSON data from the request
+#     data = request.json
 
-    # Get form data from the request
-    listeabonne = request.form.get('listeabonne')
-    documentemprunté = request.form.get('documentemprunté')
-    datedemprunt = request.form.get('datedemprunt')
-    datederetourprévue = request.form.get('datederetourprévue')
-    statutdelemprunt = request.form.get('statutdelemprunt') 
+#     # Get form data from the request
+#     listeabonne = request.form.get('listeabonne')
+#     documentemprunté = request.form.get('documentemprunté')
+#     datedemprunt = request.form.get('datedemprunt')
+#     datederetourprévue = request.form.get('datederetourprévue')
+#     statutdelemprunt = request.form.get('statutdelemprunt') 
 
-    # Check if required fields are provided
-    if not listeabonne or not documentemprunté or not datedemprunt:
-        return jsonify({"error": "listeabonne, documentemprunté, and datedemprunt are required fields."}), 400
+#     # Check if required fields are provided
+#     if not listeabonne or not documentemprunté or not datedemprunt:
+#         return jsonify({"error": "listeabonne, documentemprunté, and datedemprunt are required fields."}), 400
 
-    # Validate and parse date if provided
-    if datederetourprévue:
-        try:
-            datederetourprévue = datetime.strptime(datederetourprévue, '%Y-%m-%d')
-        except ValueError:
-            return jsonify({"error": "Invalid date format. Expected format: YYYY-MM-DD."}), 400
+#     # Validate and parse date if provided
+#     if datederetourprévue:
+#         try:
+#             datederetourprévue = datetime.strptime(datederetourprévue, '%Y-%m-%d')
+#         except ValueError:
+#             return jsonify({"error": "Invalid date format. Expected format: YYYY-MM-DD."}), 400
 
-    if datedemprunt:
-        try:
-            datedemprunt = datetime.strptime(datedemprunt, '%Y-%m-%d')
-        except ValueError:
-            return jsonify({"error": "Invalid date format. Expected format: YYYY-MM-DD."}), 400
-
-
-     emprunt_data = {
-        "listeabonne": listeabonne,
-        "documentemprunté": documentemprunté,
-        "datedemprunt": datedemprunt,
-        "datederetourprévue": datederetourprévue,
-        "statutdelemprunt": statutdelemprunt
-    }
+#     if datedemprunt:
+#         try:
+#             datedemprunt = datetime.strptime(datedemprunt, '%Y-%m-%d')
+#         except ValueError:
+#             return jsonify({"error": "Invalid date format. Expected format: YYYY-MM-DD."}), 400
 
 
-    # Insert into the MongoDB collection
-    db.emprunt.insert_one(emprunt_data)
+#      emprunt_data = {
+#         "listeabonne": listeabonne,
+#         "documentemprunté": documentemprunté,
+#         "datedemprunt": datedemprunt,
+#         "datederetourprévue": datederetourprévue,
+#         "statutdelemprunt": statutdelemprunt
+#     }
 
 
-    # Return a success message
-    return jsonify({"message": "emprunt créé avec succès !"}), 201
+#     # Insert into the MongoDB collection
+#     db.emprunt.insert_one(emprunt_data)
+
+
+#     # Return a success message
+#     return jsonify({"message": "emprunt créé avec succès !"}), 201

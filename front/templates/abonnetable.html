@@ -202,32 +202,43 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
 	  </script>
 
 <script>
-	function filterTable() {
-		const searchName = document.getElementById("searchName").value.toLowerCase();
-		const searchDate = document.getElementById("searchDate").value;
-		const table = document.getElementById("abonneTable");
-		const rows = table.getElementsByTagName("tr");
-	
-		for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header row
-			const row = rows[i];
-			const nameCell = row.cells[0].textContent.toLowerCase();
-			const dateCell = row.cells[3].textContent.trim();
-	
-			// Filter by name
-			const matchesName = nameCell.includes(searchName);
-	
-			// Filter by date (if a date is provided in the search)
-			const matchesDate = searchDate ? dateCell.includes(searchDate) : true;
-	
-			// Display or hide the row based on the filters
-			if (matchesName && matchesDate) {
-				row.style.display = "";
-			} else {
-				row.style.display = "none";
-			}
-		}
-	}
-	</script>
+    function filterTable() {
+        const searchName = document.getElementById("searchName").value.toLowerCase();
+        const searchDate = document.getElementById("searchDate").value;
+        const table = document.getElementById("abonneTable");
+        const rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header row
+            const row = rows[i];
+            
+            const nameCell = row.cells[0].textContent.toLowerCase();
+            const emailCell = row.cells[1].textContent.toLowerCase();
+            const adresseCell = row.cells[2].textContent.toLowerCase();
+            const dateCell = row.cells[3].textContent.trim();
+            const listedempruntsCell = row.cells[4].textContent.toLowerCase();
+            const historiquedempruntsCell = row.cells[5].textContent.toLowerCase();
+
+            // Filter by name
+            const matchesName = nameCell.includes(searchName);
+
+            // Filter by email, adresse, listedemprunts, historiquedemprunts
+            const matchesEmail = emailCell.includes(searchName);
+            const matchesAdresse = adresseCell.includes(searchName);
+            const matchesListedemprunts = listedempruntsCell.includes(searchName);
+            const matchesHistoriquedemprunts = historiquedempruntsCell.includes(searchName);
+
+            // Filter by date (if a date is provided in the search)
+            const matchesDate = searchDate ? dateCell.includes(searchDate) : true;
+
+            // Display or hide the row based on the filters
+            if ((matchesName || matchesEmail || matchesAdresse || matchesListedemprunts || matchesHistoriquedemprunts) && matchesDate) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+</script>
 	
 </body>
 </html>

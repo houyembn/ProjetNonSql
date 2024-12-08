@@ -7,56 +7,129 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <!-- Link to the CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <!-- Include Chart.js -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .chart-container {
+            width: 50%;
+            max-width: 600px;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
 
   <title>BookUp</title>
-</head>
-<body>
-	{% include 'shared.html' %}
-	<!-- CONTENT -->
-	<section id="content">
-	
-		<main>
-			<div class="head-title">
-				<div class="left">
-					<h1>Dashboard</h1>
-					<ul class="breadcrumb">
-						<li>
-							<a href="#">Dashboard</a>
-						</li>
-						<li><i class='bx bx-chevron-right' ></i></li>
-						<li>
-							<a class="active" href="#">Home</a>
-						</li>
-					</ul>
-				</div>
-			</div>
+  
+  {% include 'shared.html' %}
+  
+  <!-- CONTENT -->
+  <section id="content">
+    <main>
+      <div class="head-title">
+        <div class="left">
+          <h1>Dashboard</h1>
+          <ul class="breadcrumb">
+            <li>
+              <a href="#">Dashboard</a>
+            </li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li>
+              <a class="active" href="#">Home</a>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-			<ul class="box-info">
-				<li>
-					<i class='bx bxs-group' ></i>
-					<span class="text">
-						<h3>{{ total_abonnes }}</h3>
-						<p>Nombre d'abonnées</p>
-					</span>
-				</li>
-				<li>
-					<i class='bx bxs-calendar-check' ></i>
-					<span class="text">
-						<h3>2834</h3>
-						<p>Visitors</p>
-					</span>
-				</li>
-				<li>
-					<i class='bx bxs-dollar-circle' ></i>
-					<span class="text">
-						<h3>$2543</h3>
-						<p>Total Sales</p>
-					</span>
-				</li>
-			</ul>
-		</main>
-	</section>
+      <ul class="box-info">
+        <li>
+          <i class='bx bxs-group'></i>
+          <span class="text">
+            <h3>{{ total_abonnes }}</h3>
+            <p>Nombre d'abonnées</p>
+          </span>
+        </li>
+        <li>
+          <i class='bx bxs-doughnut-chart'></i>
+          <span class="text">
+            <h3>{{ total_documents }}</h3>
+            <p>Nombre des documents</p>
+          </span>
+        </li>
+        <li>
+          <i class='bx bxs-shopping-bag-alt'></i>
+          <span class="text">
+            <h3>{{ total_emprunts }}</h3>
+            <p>Nombre des emprunts</p>
+          </span>
+        </li>
+      </ul>
+
+      <!-- Chart Section -->
+      <div class="chart-container">
+        <canvas id="myChart"></canvas>
+      </div>
+    </main>
+  </section>
+
+  <!-- <script>
+    // Setup data for the chart
+    const data = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+            label: 'Sample Data',
+            data: [10, 20, 30, 40, 50, 60, 70],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Config object for the chart
+    const config = {
+        type: 'doughnut', // Change to 'bar', 'line', etc. for different chart types
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Sample Chart'
+                }
+            }
+        }
+    };
+
+    // Render the chart
+    window.onload = () => {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        new Chart(ctx, config);
+    };
+  </script> -->
+
 </body>
 </html>

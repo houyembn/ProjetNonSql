@@ -34,7 +34,7 @@
                 </li>
 				<li class="{% if request.path == '/AbonneeTable' %}active{% endif %}">
                     <a href="{{ url_for('abonneestable') }}">
-                        <i class="bx bxs-group"></i>
+                        <i class="bx bx-list-ul"></i>
                         <span class="text">Liste des abonnées</span>
                     </a>
                 </li>
@@ -48,7 +48,7 @@
 			</li>
 			<li class="{% if request.path == '/DocumentTable' %}active{% endif %}">
 				<a href="{{ url_for('documentstable') }}">
-					<i class="bx bxs-group"></i>
+					<i class="bx bx-list-ul"></i>
 					<span class="text">Liste des documents</span>
 				</a>
 			</li>
@@ -60,16 +60,16 @@
 			</li>
 			<li class="{% if request.path == '/EmpruntTable' %}active{% endif %}">
 				<a href="{{ url_for('empruntstable') }}">
-					<i class='bx bxs-shopping-bag-alt' ></i>
+					<i class="bx bx-list-ul"></i>
 					<span class="text"> Liste des emprunts</span>
 				</a>
 			</li>
-			<!-- <li>
-				<a href="#">
-					<i class='bx bxs-group' ></i>
-					<span class="text">Team</span>
+			<li>
+				<a href="/Calender">
+					<i class="bx bx-calendar"></i>
+					<span class="text">Calendrier</span>
 				</a>
-			</li> -->
+			</li>
 		</ul>
 		<ul class="side-menu">
 			<!-- <li>

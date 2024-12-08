@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +6,8 @@
     <title>NoSQL Project</title>
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
 	
 
     <!-- Link to the CSS file -->
@@ -22,8 +24,8 @@
 						<div class="search-container">
 							<!-- Search inputs and icon -->
 							<div class="search-box">
-								<input type="text" id="searchName" placeholder="Rechercher" onkeyup="filterTable()">
-								<input type="date" id="searchDate" onchange="filterTable()">
+								<input type="text" id="searchReference" placeholder="Rechercher" onkeyup="filterTable()">
+                                <input type="date" id="searchDate" onchange="filterTable()">
 								<i class='bx bx-search'></i>
 							</div>
 					
@@ -38,29 +40,44 @@
 					<table id="empruntTable">
 						<thead>
 							<tr>
+								<th>Réference de l'emprunt</th>
 								<th>Liste des abonnes</th>
 								<th>Document emprunté</th>
 								<th>Date d'emprunt</th>
 								<th>Date de retour prévue</th>
-                                <th>Statut de l'emprunt</th>
+                                <th>
+                                    <label for="filterStatut" style="display: inline-flex; align-items: center;">
+                                        Statut de l'emprunt
+                                        <i class="fas fa-caret-down" id="dropdown-icon" onclick="toggleDropdown()" style="margin-left: 10px;"></i>
+                                    </label>
+                                    <div class="dropdown-container">
+                                        <select id="filterStatut" onchange="filterEmpruntsByStatut()" style="display: none;">
+                                            <option value="all">Tous</option>
+                                            <option value="Terminé">Terminé</option>
+                                            <option value="Retardé">Retardé</option>
+                                            <option value="En cours">Annulé</option>
+                                        </select>
+                                    </div>
+                                </th>
 								<th>Order</th>
 							</tr>
 						</thead>
 						<tbody>
                             {% for emprunt in emprunts %}
-							<tr>
-								<td><br>
-							{{emprunt.abonne}}
-								</td>
+                            <tr class="emprunt-row">
+                                <td><br>{{emprunt.reference}}</td>
+								<td>{{emprunt.abonne}}</td>
 								<td>{{emprunt.documentemprunte}}</td>
                                 <td>{{emprunt.datedemprunt}}</td>
 								<td>{{emprunt.datederetour}}</td>
-                                <td>{{emprunt.statusemprunt}}</td>
+                                <td class="status">
+                                    {{ emprunt.statusemprunt }}
+                                  </td>
 								<td>
 
 						<!-- Delete Form -->
-                        <form id="deleteForm-{{ emprunt.idEmprunt }}" action="/delete_emprunt" method="POST" style="display:inline;">
-                            <input type="hidden" name="idEmprunt" value="{{ emprunt.idEmprunt }}">
+                        <form id="deleteForm-{{ emprunt.reference }}" action="/delete_emprunt" method="POST" style="display:inline;">
+							<input type="hidden" name="reference" value="{{ emprunt.reference}}">
                             <button
                                 class="btn btn-danger btn-sm"
                                 type="submit"
@@ -71,20 +88,16 @@
                         
 
 <!-- Update Form -->
-<form id="updateForm-{{ emprunt.idEmprunt }}" action="/update_emprunt/{{ emprunt.idEmprunt}}" method="POST" style="display:inline;">
+<form id="updateForm-{{ emprunt.reference }}" action="/update_emprunt/{{ emprunt.reference}}" method="POST" style="display:inline;">
     <button 
         class="btn btn-success btn-sm" 
         type="button" 
-        onclick="showUpdateForm('{{ emprunt.listeabonne}}', '{{ emprunt.documentemprunté }}', '{{ emprunt.datedemprunt }}', '{{ emprunt.datederetourprévue }}', '{{ emprunt.statutdelemprunt}}')">
+        onclick="showUpdateForm('{{ emprunt.reference}}','{{ emprunt.abonne}}', '{{ emprunt.documentemprunte }}', '{{ emprunt.datedemprunt }}', '{{ emprunt.datederetour }}', '{{ emprunt.statusemprunt}}')">
         <i class="fa fa-edit"></i>
     </button>
 </form>
 
-
-
 								</td>
-							</tr>
-								<!-- <td><span class="status completed">Completed</span></td> -->
 							</tr>
                             {% endfor %}
 						</tbody>
@@ -125,32 +138,38 @@
 
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function showUpdateForm(id, listeabonne, documentemprunté, datedemprunt, datederetourprévue, datedinscription, statutdelemprunt) {
-    let formattedDate = new Date(datedinscription).toISOString().split('T')[0];
+function showUpdateForm(reference, abonne, documentemprunte, datedemprunt, datederetour, statusemprunt) {
+    console.log('Button clicked', { reference, abonne, documentemprunte, datedemprunt, datederetour, statusemprunt });
 
+    // Display the Swal popup with dynamic content
     Swal.fire({
-        title: '<h3 style="color: #3C91E6; margin-bottom: 20px;">Modifier Abonné</h3>',
+        title: '<h3 style="color: #3C91E6; margin-bottom: 20px;">Modifier Emprunt</h3>',
         html: ` 
-            <form id="swal-update-form" action="/update_emprunt/${idEmprunt}" method="POST" class="text-left">
+            <form id="swal-update-form" action="/update_emprunt/${reference}" method="POST" class="text-left">
                 <div class="form-group mb-3">
-                    <label for="listeabonne">Liste des abonnes</label>
-                    <input type="text" name="listeabonne" value="${listeabonne}" class="form-control" placeholder="Liste des abonnes" required>
+                    <label for="abonne">Liste des abonnes</label>
+                     <input type="abonne" name="abonne" value="${abonne}" class="form-control">
                 </div>
                 <div class="form-group mb-3">
-                    <label for="documentemprunté ">Document emprunté </label>
-                    <input type="text" name="documentemprunté " value="${documentemprunté }" class="form-control" placeholder="Document emprunté" required>
+                    <label for="documentemprunte">Document emprunté</label>
+                    <input type="documentemprunte" name="documentemprunte" value="${documentemprunte}" class="form-control"
                 </div>
                 <div class="form-group mb-3">
-                    <label for="Date d'emprunt">datedemprunt</label>
-                    <input type="date" name="datedemprunt" value="${formattedDate}" class="form-control">
-                </div>
-				<div class="form-group mb-3">
-                    <label for="Date de retour prévue">datederetourprévue</label>
-                    <input type="date" name="datederetourprévue" value="${formattedDate}" class="form-control">
+                    <label for="datedemprunt">Date d'emprunt</label>
+                    <input type="date" name="datedemprunt" value="${datedemprunt}" class="form-control">
                 </div>
                 <div class="form-group mb-3">
-                    <label for="statutdelemprunt">Statut de l'emprunt</label>
-                    <input type="text" name="statutdelemprunt" value="${statutdelemprunt}" class="form-control" placeholder="Liste d'Emprunts" required>
+                    <label for="datederetour">Date de retour prévue</label>
+                    <input type="date" name="datederetour" value="${datederetour}" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="statusemprunt">Statut de l'emprunt</label>
+                    <select id="statusemprunt" name="statusemprunt" class="form-control" required>
+                        <option value="" disabled selected>Sélectionnez un status</option>
+                        <option value="Terminé" ${statusemprunt === 'Terminé' ? 'selected' : ''}>Terminé</option>
+                        <option value="Retardé" ${statusemprunt === 'Retardé' ? 'selected' : ''}>Retardé</option>
+                        <option value="Annulé" ${statusemprunt === 'Annulé' ? 'selected' : ''}>Annulé</option>
+                    </select>
                 </div>
                 <div style="justify-content: center; margin-top: 20px;">
                     <button type="submit" class="btn btn-primary">Mettre à jour</button>
@@ -161,23 +180,15 @@ function showUpdateForm(id, listeabonne, documentemprunté, datedemprunt, datede
         customClass: {
             popup: 'swal2-popup-custom',
         },
-		showCloseButton: true,
+        showCloseButton: true,
     });
 }
-
-
-
-
-
-
-
-
 </script>
 
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
-		function confirmDeletion(idEmprunt) {
+		function confirmDeletion(reference) {
 		  Swal.fire({
 			title: 'Êtes-vous sûr ?',
 			text: "Cette action est irréversible !",
@@ -189,7 +200,7 @@ function showUpdateForm(id, listeabonne, documentemprunté, datedemprunt, datede
 			cancelButtonText: 'Annuler'
 		  }).then((result) => {
 			if (result.isConfirmed) {
-			  document.getElementById(`deleteForm-${idEmprunt}`).submit();
+			  document.getElementById(`deleteForm-${reference}`).submit();
 			}
 		  });
 		}
@@ -197,31 +208,101 @@ function showUpdateForm(id, listeabonne, documentemprunté, datedemprunt, datede
 
 <script>
 	function filterTable() {
-		const searchName = document.getElementById("searchName").value.toLowerCase();
-		const searchDate = document.getElementById("searchDate").value;
-		const table = document.getElementById("empruntTable");
-		const rows = table.getElementsByTagName("tr");
-	
-		for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header row
-			const row = rows[i];
-			const nameCell = row.cells[0].textContent.toLowerCase();
-			const dateCell = row.cells[3].textContent.trim();
-	
-			// Filter by name
-			const matchesName = nameCell.includes(searchName);
-	
-			// Filter by date (if a date is provided in the search)
-			const matchesDate = searchDate ? dateCell.includes(searchDate) : true;
-	
-			// Display or hide the row based on the filters
-			if (matchesName && matchesDate) {
-				row.style.display = "";
-			} else {
-				row.style.display = "none";
-			}
-		}
-	}
-	</script>
-	
+	   const searchReference = document.getElementById("searchReference").value.toLowerCase().trim();  // Added trim to handle extra spaces
+	   const searchDate = document.getElementById("searchDate").value;
+	   const table = document.getElementById("empruntTable");
+	   const rows = table.getElementsByTagName("tr");
+
+	   for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header row
+		   const row = rows[i];
+		   
+		   // Get the text content of each column cell
+		   const referenceCell = row.cells[0].textContent.trim().toLowerCase(); // Titre
+		   const abonneCell = row.cells[1].textContent.trim().toLowerCase();  // Type
+		   const documentCell = row.cells[2].textContent.trim().toLowerCase(); // Auteur
+		   const dateCell = row.cells[3].textContent.trim(); // Date de publication
+		   const disponibiliteCell = row.cells[4].textContent.trim().toLowerCase(); // Disponibilité
+
+		   // Filter by title (Titre)
+		   const matchesTitre =referenceCell.includes(searchReference);
+
+		   // Optionally filter by other columns if you want
+		   const matchesabonne = abonneCell.includes(searchReference);
+		   const matchesdocument= documentCell.includes(searchReference);
+		   const matchesDisponibilite = disponibiliteCell.includes(searchReference);
+
+		   // Filter by date (if a date is provided in the search)
+		   const matchesDate = searchDate ? dateCell.includes(searchDate) : true;
+
+		   // Display or hide the row based on the filters
+		   if ((matchesabonne || matchesabonne || matchesDisponibilite) && matchesDate) {
+			   row.style.display = "";
+		   } else {
+			   row.style.display = "none";
+		   }
+	   }
+   }
+</script>
+
+<script>
+    // Toggle the visibility of the dropdown when the icon is clicked
+    function toggleDropdown() {
+        const dropdown = document.getElementById('filterStatut');
+        const icon = document.getElementById('dropdown-icon');
+        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+            dropdown.style.display = 'block';
+            icon.classList.remove('fa-caret-down');
+            icon.classList.add('fa-caret-up');
+        } else {
+            dropdown.style.display = 'none';
+            icon.classList.remove('fa-caret-up');
+            icon.classList.add('fa-caret-down');
+        }
+    }
+</script>
+    
+<script>
+    function filterEmpruntsByStatut() {
+        // Récupérer la valeur sélectionnée dans la liste déroulante
+        const selectedStatut = document.getElementById('filterStatut').value;
+        
+        // Récupérer toutes les lignes du tableau
+        const rows = document.querySelectorAll('.emprunt-row');
+        
+        rows.forEach(row => {
+            // Récupérer le texte de la cellule de statut
+            const statutCell = row.querySelector('.statut-cell').textContent.trim();
+            
+            // Vérifier si la ligne correspond au statut sélectionné
+            if (selectedStatut === 'all' || statutCell === selectedStatut) {
+                row.style.display = ''; // Afficher la ligne
+            } else {
+                row.style.display = 'none'; // Masquer la ligne
+            }
+        });
+    }
+</script>
+
+<script>
+    const statusCells = document.querySelectorAll('.status');
+    statusCells.forEach(cell => {
+      const status = cell.innerText.trim(); // Get the text inside the <td> (statusemprunt value)
+      
+      if (status === "Terminé") {
+        cell.classList.add('completed');
+        cell.classList.remove('not-completed');
+        cell.classList.remove('not-completedatall');
+      } else if (status === "Retardé") {
+        cell.classList.add('not-completed');
+        cell.classList.remove('completed');
+        cell.classList.remove('not-completedatall');
+    } else if (status === "Annulé") {
+        cell.classList.remove('not-completed');
+        cell.classList.remove('completed');
+        cell.classList.add('not-completedatall');
+      }
+    });
+  </script>
+
 </body>
 </html>

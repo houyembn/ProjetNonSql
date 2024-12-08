@@ -23,7 +23,7 @@
 							<!-- Search inputs and icon -->
 							<div class="search-box">
 								<input type="text" id="searchTitre" placeholder="Rechercher" onkeyup="filterTable()">
-								<input type="date" id="searchDate" onchange="filterTable()">
+                                <input type="date" id="searchDate" onchange="filterTable()">
 								<i class='bx bx-search'></i>
 							</div>
 					
@@ -199,7 +199,7 @@ function showUpdateForm(id, titre, type_doc, auteur, datedepublication ,disponib
 	  </script>
 
 <script>
-    function filterTable() {
+     function filterTable() {
         const searchTitre = document.getElementById("searchTitre").value.toLowerCase().trim();  // Added trim to handle extra spaces
         const searchDate = document.getElementById("searchDate").value;
         const table = document.getElementById("documentTable");
@@ -207,17 +207,27 @@ function showUpdateForm(id, titre, type_doc, auteur, datedepublication ,disponib
 
         for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header row
             const row = rows[i];
-            const titleCell = row.cells[0].textContent.trim().toLowerCase();  // Ensure trimming and case-insensitivity
-            const dateCell = row.cells[3].textContent.trim();  // Trim any extra spaces for date
+            
+            // Get the text content of each column cell
+            const titreCell = row.cells[0].textContent.trim().toLowerCase(); // Titre
+            const typeCell = row.cells[1].textContent.trim().toLowerCase();  // Type
+            const auteurCell = row.cells[2].textContent.trim().toLowerCase(); // Auteur
+            const dateCell = row.cells[3].textContent.trim(); // Date de publication
+            const disponibiliteCell = row.cells[4].textContent.trim().toLowerCase(); // Disponibilité
 
-            // Filter by title
-            const matchesTitre = titleCell.includes(searchTitre);
+            // Filter by title (Titre)
+            const matchesTitre = titreCell.includes(searchTitre);
+
+            // Optionally filter by other columns if you want
+            const matchesType = typeCell.includes(searchTitre);
+            const matchesAuteur = auteurCell.includes(searchTitre);
+            const matchesDisponibilite = disponibiliteCell.includes(searchTitre);
 
             // Filter by date (if a date is provided in the search)
             const matchesDate = searchDate ? dateCell.includes(searchDate) : true;
 
             // Display or hide the row based on the filters
-            if (matchesTitre && matchesDate) {
+            if ((matchesTitre || matchesType || matchesAuteur || matchesDisponibilite) && matchesDate) {
                 row.style.display = "";
             } else {
                 row.style.display = "none";

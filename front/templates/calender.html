@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FullCalendar Example</title>
+
+  <!-- Include Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.css" rel="stylesheet">
+
+  <!-- Optional: FullCalendar Theme CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.print.min.css" rel="stylesheet" media="print">
+
+  <!-- jQuery (required for FullCalendar) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
+
+  <style>
+    /* Add your styles here */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    
+    #calendar {
+      margin-top: 30px;
+      max-width: 900px;
+      margin-left: 450px;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Custom styles for FullCalendar buttons */
+    .fc-button {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      color: #000;
+    }
+    
+    .fc-button:hover {
+      background-color: #f4f4f4;
+      color: #000;
+    }
+    
+    .fc-button:focus {
+      background-color: #f4f4f4;
+      color: #000;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+    {% include 'shared.html' %}
+  <div id="calendar"></div>
+
+  <script>
+    $(document).ready(function() {
+      $.getJSON('/calendar-data', function(events) {
+        $('#calendar').fullCalendar({
+          header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+          },
+          events: events
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -6,6 +6,8 @@
     <title>NoSQL Project</title>
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
 
     <!-- Link to the CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -19,37 +21,48 @@
 					<div class="head">
 						<h3>Formulaire</h3>
 					</div>
-					<form id="empruntForm" action="/emprunt" method="POST">
+					<form id="empruntForm" action="/addemprunts" method="POST">
 						<div class="form-group">
-							<div class="form-group">
-								<label>Choisissez un abonné :</label>
-								<select name="email" id="email-combobox" required>
-									{% for email in emails %}
-										<option value="{{ email }}">{{ email }}</option>
-									{% endfor %}
-								</select>
-							</div>
-
-
+							<label for="reference">Réference de l'emprunt</label>
+							<input type="text" id="reference" placeholder="Reference" name="reference" required>
 						</div>
 						<div class="form-group">
-							<label for="documentemprunté">Document Emprunté</label>
-							<input type="text" id="documentemprunté" placeholder="documentemprunté" name="documentemprunté" required>
+							<label for="abonne">Choisissez un abonné :</label>
+							<select id="abonne" name="abonne" required>
+								<option value="" disabled selected>Sélectionnez un abonné</option>
+								{% for abonne in abonnes %}
+									<option value="{{ abonne.nom }} {{ abonne.prenom }}">{{ abonne.nom }} {{ abonne.prenom }}</option>
+								{% endfor %}
+							</select>
 						</div>
+						
+					
+						<div class="form-group">
+							<label for="documentemprunte">Document Emprunté</label>
+							<select id="documentemprunte" name="documentemprunte" required>
+								<option value="" disabled selected>Sélectionnez un document</option>
+								{% for document in documents %}
+									{% if document.disponibilite == 'oui' %}
+										<option value="{{ document.titre }}">{{ document.titre }}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+						</div>
+						
 						<div class="form-group">
 							<label for="datedemprunt">Date d'emprunt</label>
 							<input type="date" id="datedemprunt"  name="datedemprunt">
 						</div>
 						<div class="form-group">
-							<label for="datederetourprévue">Date de retour prévue</label>
-							<input type="date" id="datederetourprévue"  name="datederetourprévue">
+							<label for="datederetour">Date de retour prévue</label>
+							<input type="date" id="datederetour"  name="datederetour">
 						</div>
 						<div class="form-group">
-							<label for="statutdelemprunt">Statut de l'emprunt</label>
-							<select id="statutdelemprunt" name="statutdelemprunt" required>
-								<option value="terminé">Terminé</option>
-								<option value="retardé">Retardé</option>
-								<option value="annulé">Annulé</option>
+							<label for="statusemprunt">Statut de l'emprunt</label>
+							<select id="statusemprunt" name="statusemprunt" required>
+								<option value="Terminé">Terminé</option>
+								<option value="Retardé">Retardé</option>
+								<option value="Annulé">Annulé</option>
 							</select>
 						</div>						
 						<input type="hidden" name="idEmprunt" value="idEmprunt">
@@ -94,7 +107,7 @@
     </section>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
-		function confirmDeletion(idEmprunt) {
+		function confirmDeletion(reference) {
 		  Swal.fire({
 			title: 'Êtes-vous sûr ?',
 			text: "Cette action est irréversible !",
@@ -106,10 +119,29 @@
 			cancelButtonText: 'Annuler'
 		  }).then((result) => {
 			if (result.isConfirmed) {
-			  document.getElementById(`deleteForm-${idEmprunt}`).submit();
+			  document.getElementById(`deleteForm-${reference}`).submit();
 			}
 		  });
 		}
 	  </script>
+	  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+	  <script>
+		$(document).ready(function() {
+			// Initialize Select2 for the abonne dropdown
+			$('#abonne').select2({
+				placeholder: "Choisissez un abonné",
+				allowClear: true
+			});
+	
+			// Initialize Select2 for the documentemprunte dropdown
+			$('#documentemprunte').select2({
+				placeholder: "Sélectionnez un document",
+				allowClear: true
+			});
+		});
+	</script>
+	
+		  
 </body>
 </html>

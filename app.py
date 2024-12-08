@@ -47,6 +47,27 @@ def create_abonne():
     # Return a success message
     return redirect(url_for('abonneestable'))
 
+
+
+# @app.route('/emprunt', methods=['GET', 'POST'])
+# def emprunt():
+#     # Si la requête est GET, afficher le formulaire avec tous les abonnés
+#     if request.method == 'GET':
+#         abonnés = db.abonne.find()  # Requête MongoDB pour récupérer tous les abonnés
+#         abonnés_list = list(abonnés)  # Convertir le curseur MongoDB en liste
+#         return render_template('emprunt_form.html', abonnés=abonnés_list)
+
+#     # Si la requête est POST, gérer la soumission du formulaire
+#     if request.method == 'POST':
+#         abonne = request.form.get('abonne')
+#         document_emprunté = request.form.get('documentemprunté')
+        
+#         # Ajouter la logique pour traiter la soumission du formulaire (par exemple, créer un emprunt)
+        
+#         return redirect(url_for('success_page'))
+
+
+
 @app.route('/delete_abonne', methods=['POST'])
 def delete_abonne():
     email = request.form['email']
@@ -59,7 +80,7 @@ def delete_abonne():
 
 @app.route('/delete_all_abonnes', methods=['POST'])
 def delete_all_abonnes():
-    result = db.abonne.delete_many({})  # This deletes all documents in the collection
+    result = db.abonne.delete_many({})
 
     if result.deleted_count == 0:
         return "Aucun abonné trouvé.", 404
@@ -70,7 +91,7 @@ def delete_all_abonnes():
 def abonnees_emails():
     emails = list(db.abonne.find({}, {"_id": 0, "email": 1}))  
     email_list = [email['email'] for email in emails]
-    print("Emails récupérés :", email_list)  # Afficher dans la console
+    print("Emails récupérés :", email_list)
     return render_template('emprunt.html', emails=email_list)
 
 
@@ -191,56 +212,55 @@ def update_document(titre):
     return redirect(url_for('documentstable'))
 
 
-@app.route('/emprunt', methods=['POST'])
-def create_emprunt():
-    # Get form data from the request
-    listeabonne = request.form.get('listeabonne')
-    documentemprunté = request.form.get('documentemprunté')
-    datedemprunt = request.form.get('datedemprunt')
-    datederetourprévue = request.form.get('datederetourprévue')
-    statutdelemprunt = request.form.get('statutdelemprunt')
-
-    # Check if required fields are provided
-    if not listeabonne or not documentemprunté or not datedemprunt:
-        return jsonify({"error": "listeabonne, documentemprunté, and datedemprunt are required fields."}), 400
-
-    # Validate and parse date if provided
-    if datederetourprévue:
-        try:
-            datederetourprévue = datetime.strptime(datederetourprévue, '%Y-%m-%d')
-        except ValueError:
-            return jsonify({"error": "Invalid date format. Expected format: YYYY-MM-DD."}), 400
-
-    if datedemprunt:
-        try:
-            datedemprunt = datetime.strptime(datedemprunt, '%Y-%m-%d')
-        except ValueError:
-            return jsonify({"error": "Invalid date format. Expected format: YYYY-MM-DD."}), 400
-
-    # Prepare the data to insert into the database
-    emprunt_data = {
-        "listeabonne": listeabonne,
-        "documentemprunté": documentemprunté,
-        "datedemprunt": datedemprunt,
-        "datederetourprévue": datederetourprévue,
-        "statutdelemprunt": statutdelemprunt
-    }
+@app.route('/Emprunt')
+def Emprunt():
+    # Fetching emprunts, abonnés, and documents for listing
+    emprunts = list(db.emprunt.find({}, {"_id": 0})) 
+    # emprunts = list(db.emprunt.find({}, {"_id": 0, "datedemprunt": 1, "datederetour": 1, "documentemprunte": 1}))
+    abonnes = list(db.abonne.find({}, {"_id": 0, "nom": 1, "prenom": 1}))
+    documents = list(db.document.find({}, {"_id": 0, "titre": 1, "disponibilite": 1}))  # Include "disponibilite"
+    
+    # Debugging output
+    print("Abonnés:", abonnes)
+    print("Documents:", documents)
+    
+    return render_template('emprunt.html', emprunts=emprunts, abonnes=abonnes, documents=documents)
 
 
-    # Insert into the MongoDB collection
-    db.emprunt.insert_one(emprunt_data)
+@app.route('/addemprunts', methods=['GET', 'POST'])
+def addemprunts():
+    if request.method == 'POST':
+        # Collecting form data
+        data = {
+            "reference": request.form.get("reference"),
+            "abonne": request.form.get("abonne"),
+            "documentemprunte": request.form.get("documentemprunte"),
+            "datedemprunt": request.form.get("datedemprunt"),
+            "datederetour": request.form.get("datederetour"),
+            "statusemprunt": request.form.get("statusemprunt")
+        }
+        
+        # Inserting into the 'Emprunts' collection
+        db.emprunt.insert_one(data)
+        
+        # Redirect to 'emprunts' route after successful insertion
+        return redirect(url_for('empruntstable'))
 
-    # Redirect to the document list or success page
-    return redirect(url_for('empruntstable'))
+    # Fetching abonnés and documents for the form
+    abonnes = list(db.abonne.find({}, {"_id": 0, "nom": 1, "prenom": 1}))
+    documents = list(db.document.find({}, {"_id": 0, "titre": 1}))
+    
+    # Render 'emprunt.html' with data
+    return render_template('emprunttable.html', abonnes=abonnes, documents=documents)
 
-
+ 
 @app.route('/delete_emprunt', methods=['POST'])
 def delete_emprunt():
-    idEmprunt = request.form['idEmprunt']
-    result = db.emprunt.delete_one({"idEmprunt": idEmprunt})
+    reference= request.form['reference']
+    result = db.emprunt.delete_one({"reference": reference})
 
     if result.deleted_count == 0:
-        return "Aucun emprunt trouvé avec cet idEmprunt.", 404
+        return "Aucun emprunt trouvé avec cet reference.", 404
 
     return redirect(url_for('empruntstable'))
 
@@ -254,41 +274,72 @@ def delete_all_emprunts():
     return redirect(url_for('empruntstable'))
 
 
-@app.route('/update_emprunt/<idEmprunt>', methods=['POST'])
-def update_emprunt(idEmprunt):
-    listeabonne = request.form.get('listeabonne')
-    documentemprunté = request.form.get('documentemprunté')
-    datedemprunt = request.form.get('datedemprunt')
-    datederetourprévue = request.form.get('datederetourprévue')
-    statutdelemprunt = request.form.get('statutdelemprunt') 
+@app.route('/update_emprunt/<reference>', methods=['POST'])
+def update_emprunt(reference):
+    abonne= request.form.get("abonne")
+    documentemprunte=request.form.get("documentemprunte")
+    datedemprunt= request.form.get("datedemprunt")
+    datederetour= request.form.get("datederetour")
+    statusemprunt= request.form.get("statusemprunt")
 
-    emprunt = db.emprunt.find_one({"idEmprunt": idEmprunt})
+    emprunt = db.emprunt.find_one({"reference": reference})
     
     if not emprunt:
         return jsonify({"error": "emprunt introuvable"}), 404
 
     db.emprunt.update_one(
-        {"idEmprunt": idEmprunt},
+        {"reference": reference},
         {"$set": {
-        "listeabonne": listeabonne,
-        "documentemprunté": documentemprunté,
-        "datedempruntn": datedemprunt,
-        "datederetourprévue": datederetourprévue,
-        "statutdelemprunt":statutdelemprunt
+        "abonne":abonne,
+        "documentemprunte":documentemprunte,
+        "datedemprunt":datedemprunt,
+        "datederetour":datederetour,
+        "statusemprunt":statusemprunt
         }}
     )
 
     return redirect(url_for('empruntstable'))
+
+    # Fetching abonnés and documents for the form
+    abonnes = list(db.abonne.find({}, {"_id": 0, "nom": 1, "prenom": 1}))
+    documents = list(db.document.find({}, {"_id": 0, "titre": 1}))
+    
+    # Render 'emprunt.html' with data
+    return render_template('emprunttable.html', abonnes=abonnes, documents=documents)
  
+import random
+
+@app.route('/calendar-data')
+def calendar_data():
+    colors = ["#6C7EE1", "#92B9E3", "#FFC4A4", "#FBA2D0", "#C688EB", "#FD7238"]
+    emprunts = list(db.emprunt.find({}, {"_id": 0, "datedemprunt": 1, "datederetour": 1, "documentemprunte": 1}))
+    
+    events = []
+    for emprunt in emprunts:
+        color = random.choice(colors)
+        events.append({
+            "title": emprunt["documentemprunte"],
+            "start": emprunt["datedemprunt"],
+            "end": emprunt["datederetour"],
+            "color": color
+        })
+
+    return jsonify(events)
+
 
 
 
 
 @app.route('/')
 def home():
-    total_abonnes = db.abonne.count_documents({}) 
-    return render_template('index.html', total_abonnes=total_abonnes)
+    total_abonnes = db.abonne.count_documents({})
+    total_documents = db.document.count_documents({})
+    total_emprunts = db.emprunt.count_documents({})
+    return render_template('index.html', total_abonnes=total_abonnes, total_documents=total_documents,total_emprunts=total_emprunts)
 
+@app.route('/Calender')
+def Calender():
+    return render_template('calender.html')
 
 @app.route('/Shared')
 def navbar():
@@ -323,6 +374,34 @@ def emprunts():
 def empruntstable():
    emprunts = list(db.emprunt.find({}, {"_id": 0})) 
    return render_template('emprunttable.html', emprunts=emprunts)
+
+
+@app.route('/chart')
+def chart():
+    # Count total documents
+    total_documents = db.document.count_documents({})
+    
+    # Retrieve all documents and extract the 'type_doc' field
+    document_types = [doc.get('type_doc', 'Unknown') for doc in document.find()]
+    
+    # Count occurrences of each document type
+    type_counts = Counter(document_types)
+    
+    # Calculate percentages
+    percentages = {doc_type: (count / total_documents) * 100 for doc_type, count in type_counts.items()}
+    
+    # Prepare labels and values for the chart
+    labels = list(percentages.keys())
+    values = list(percentages.values())
+    
+    # Send data as JSON string to the template
+    data = {
+        'labels': labels,
+        'values': values
+    }
+    
+    return render_template('index.html', data=json.dumps(data))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
