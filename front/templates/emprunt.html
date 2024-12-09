@@ -24,8 +24,34 @@
 					<form id="empruntForm" action="/addemprunts" method="POST">
 						<div class="form-group">
 							<label for="reference">Réference de l'emprunt</label>
-							<input type="text" id="reference" placeholder="Reference" name="reference" required>
+							<input 
+								type="text" 
+								id="reference" 
+								placeholder="Reference" 
+								name="reference" 
+								required 
+								maxlength="5"
+								oninput="validateReference(this)"
+							>
+							<small id="referenceError" style="color: red; display: none;">La référence doit être un entier de 5 chiffres.</small>
 						</div>
+						
+						<script>
+							function validateReference(input) {
+								const regex = /^\d{1,5}$/; // Seulement des chiffres avec un maximum de 5
+								const errorElement = document.getElementById('referenceError');
+						
+								if (!regex.test(input.value)) {
+									errorElement.style.display = 'block';
+								} else {
+									errorElement.style.display = 'none';
+								}
+						
+								// Empêche la saisie si le texte ne correspond pas
+								input.value = input.value.replace(/[^\d]/g, '').slice(0, 5);
+							}
+						</script>
+						
 						<div class="form-group">
 							<label for="abonne">Choisissez un abonné :</label>
 							<select id="abonne" name="abonne" required>
