@@ -7,7 +7,8 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <!-- Link to the CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,65 +72,141 @@
       </ul>
 
       <!-- Chart Section -->
-      <div class="chart-container">
+      <style>
+        .chart-container {
+            display: flex;
+            gap: 200px; 
+            justify-content: center; 
+            margin-top: 10px;
+        }
+    
+        #myChart {
+            max-width: 350px; 
+            max-height: 350px; 
+        }
+
+
+    </style>
+    
+    <div class="chart-container">
         <canvas id="myChart"></canvas>
-      </div>
+        <canvas id="loanStatusChart"></canvas>
+    </div>
+    
+    
     </main>
   </section>
 
-  <!-- <script>
-    // Setup data for the chart
-    const data = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [{
-            label: 'Sample Data',
-            data: [10, 20, 30, 40, 50, 60, 70],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
-                'rgba(255, 99, 132, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(255, 99, 132, 1)'
-            ],
-            borderWidth: 1
-        }]
-    };
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      // Fetch chart data from the Flask backend
+      fetch('/chart_data')
+          .then(response => response.json())
+          .then(data => {
+              // Prepare data for the chart
+              const labels = data.map(item => item.type);
+              const counts = data.map(item => item.count);
 
-    // Config object for the chart
-    const config = {
-        type: 'doughnut', // Change to 'bar', 'line', etc. for different chart types
-        data: data,
-        options: {
+              // Render the chart
+              const ctx = document.getElementById('myChart').getContext('2d');
+              new Chart(ctx, {
+                  type: 'pie', // Change to 'bar' for a histogram
+                  data: {
+                      labels: labels,
+                      datasets: [{
+                          label: 'Document Count',
+                          data: counts,
+                          backgroundColor: [
+                              'rgba(255, 99, 132, 0.2)',
+                              'rgba(54, 162, 235, 0.2)',
+                              'rgba(255, 206, 86, 0.2)',
+                              'rgba(75, 192, 192, 0.2)',
+                              'rgba(153, 102, 255, 0.2)',
+                              'rgba(255, 159, 64, 0.2)'
+                          ],
+                          borderColor: [
+                              'rgba(255, 99, 132, 1)',
+                              'rgba(54, 162, 235, 1)',
+                              'rgba(255, 206, 86, 1)',
+                              'rgba(75, 192, 192, 1)',
+                              'rgba(153, 102, 255, 1)',
+                              'rgba(255, 159, 64, 1)'
+                          ],
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      plugins: {
+                          legend: {
+                              position: 'top',
+                          },
+                          title: {
+                              display: true,
+                              text: 'Répartition des documents par type'
+                          }
+                      }
+                  }
+              });
+          })
+          .catch(error => console.error('Error fetching chart data:', error));
+  });
+</script>
+<script>
+  // Récupération des données du backend
+  fetch('/api/loan_status_stats')
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "success") {
+        const labels = data.data.map(item => item.status);
+        const counts = data.data.map(item => item.count);
+
+        // Configuration du graphique
+        const ctx = document.getElementById('loanStatusChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Nombre d\'emprunts',
+              data: counts,
+              backgroundColor: [
+                              'rgba(255, 99, 132, 0.2)',
+                              'rgba(54, 162, 235, 0.2)',
+                              'rgba(255, 206, 86, 0.2)',
+                              'rgba(75, 192, 192, 0.2)',
+                              'rgba(153, 102, 255, 0.2)',
+                              'rgba(255, 159, 64, 0.2)'
+                          ],
+                          borderColor: [
+                              'rgba(255, 99, 132, 1)',
+                              'rgba(54, 162, 235, 1)',
+                              'rgba(255, 206, 86, 1)',
+                              'rgba(75, 192, 192, 1)',
+                              'rgba(153, 102, 255, 1)',
+                              'rgba(255, 159, 64, 1)'
+                          ],
+              borderWidth: 1
+            }]
+          },
+          options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Sample Chart'
-                }
-            }
-        }
-    };
-
-    // Render the chart
-    window.onload = () => {
-        const ctx = document.getElementById('myChart').getContext('2d');
-        new Chart(ctx, config);
-    };
-  </script> -->
-
+                          legend: {
+                              position: 'top',
+                          },
+                          title: {
+                              display: true,
+                              text: 'Nombre d\'emprunts selon leurs statuts'
+                          }
+                      }
+          }
+        });
+      } else {
+        console.error(data.message);
+      }
+    })
+    .catch(error => console.error('Erreur:', error));
+</script>
 </body>
 </html>

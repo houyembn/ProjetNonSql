@@ -7,6 +7,8 @@ app = Flask(__name__, static_folder='front/static', template_folder='front/templ
 
 client = MongoClient("mongodb://localhost:27017/")
 db = client["gestionabonnee"]
+correct_email = "test@gmail.com"
+correct_password = "test"
 
 @app.route('/abonne', methods=['POST'])
 def create_abonne():
@@ -328,7 +330,19 @@ def calendar_data():
 
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        # Vérification des identifiants
+        if email == correct_email and password == correct_password:
+            return redirect(url_for('home'))  # Redirection vers la page d'accueil
+        else:
+            return render_template('login.html', error="Identifiants incorrects.")  # Afficher un message d'erreur
 
+    return render_template('login.html')
 
 @app.route('/')
 def home():
@@ -401,6 +415,33 @@ def chart():
     }
     
     return render_template('index.html', data=json.dumps(data))
+
+
+@app.route('/chart_data')
+def chart_data():
+    # Example: Get the count of documents by type
+    document_types = db.document.aggregate([
+        {"$group": {"_id": "$type_doc", "count": {"$sum": 1}}}
+    ])
+    data = [{"type": doc["_id"], "count": doc["count"]} for doc in document_types]
+
+    return jsonify(data)
+
+@app.route('/api/loan_status_stats', methods=['GET'])
+def get_loan_status_stats():
+    try:
+        # Regrouper les emprunts par statut et compter leur occurrence
+        pipeline = [
+            {"$group": {"_id": "$statusemprunt", "total": {"$sum": 1}}}
+        ]
+        loan_statuses = list(db.emprunt.aggregate(pipeline))
+        
+        # Préparer les données pour le front-end
+        response_data = [{"status": doc["_id"], "count": doc["total"]} for doc in loan_statuses]
+        
+        return jsonify({"status": "success", "data": response_data}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 if __name__ == "__main__":
