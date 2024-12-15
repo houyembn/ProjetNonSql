@@ -7,8 +7,11 @@ app = Flask(__name__, static_folder='front/static', template_folder='front/templ
 
 client = MongoClient("mongodb://localhost:27017/")
 db = client["gestionabonnee"]
-correct_email = "test@gmail.com"
-correct_password = "test"
+abonnes_collection = db['abonne']
+
+# Static credentials for additional login case
+correct_email = "admin@example.com"
+correct_password = "admin123"
 
 @app.route('/abonne', methods=['POST'])
 def create_abonne():
@@ -18,8 +21,9 @@ def create_abonne():
     email = request.form.get('email')
     adresse = request.form.get('adresse')
     datedinscription = request.form.get('datedinscription')
-    historiquedemprunts = request.form.get('historiquedemprunts')
-    listedemprunts = request.form.get('listedemprunts')
+    motdepasse = request.form.get('motdepasse')
+    # historiquedemprunts = request.form.get('historiquedemprunts')
+    # listedemprunts = request.form.get('listedemprunts')
 
     # Check if required fields are provided
     if not nom or not prenom or not email:
@@ -39,8 +43,9 @@ def create_abonne():
         "email": email,
         "adresse": adresse,
         "datedinscription": datedinscription,
-        "historiquedemprunts": historiquedemprunts,
-        "listedemprunts": listedemprunts
+        "motdepasse": motdepasse,
+        # "historiquedemprunts": historiquedemprunts,
+        # "listedemprunts": listedemprunts
     }
 
     # Insert into the MongoDB collection
@@ -109,8 +114,9 @@ def update_abonne(email):
     prenom = request.form.get('prenom')
     adresse = request.form.get('adresse')
     datedinscription = request.form.get('datedinscription')
-    historiquedemprunts = request.form.get('historiquedemprunts')
-    listedemprunts = request.form.get('listedemprunts')
+    motdepasse = request.form.get('motdepasse')
+    # historiquedemprunts = request.form.get('historiquedemprunts')
+    # listedemprunts = request.form.get('listedemprunts')
 
     abonne = db.abonne.find_one({"email": email})
     
@@ -124,8 +130,9 @@ def update_abonne(email):
             "prenom": prenom,
             "adresse": adresse,
             "datedinscription": datedinscription ,
-            "historiquedemprunts": historiquedemprunts,
-            "listedemprunts": listedemprunts
+            "motdepasse": motdepasse,
+            # "historiquedemprunts": historiquedemprunts,
+            # "listedemprunts": listedemprunts
         }}
     )
 
@@ -219,7 +226,7 @@ def Emprunt():
     # Fetching emprunts, abonnés, and documents for listing
     emprunts = list(db.emprunt.find({}, {"_id": 0})) 
     # emprunts = list(db.emprunt.find({}, {"_id": 0, "datedemprunt": 1, "datederetour": 1, "documentemprunte": 1}))
-    abonnes = list(db.abonne.find({}, {"_id": 0, "nom": 1, "prenom": 1}))
+    abonnes = list(db.abonne.find({}, {"_id": 0, "email": 1,}))
     documents = list(db.document.find({}, {"_id": 0, "titre": 1, "disponibilite": 1}))  # Include "disponibilite"
     
     # Debugging output
@@ -249,7 +256,9 @@ def addemprunts():
         return redirect(url_for('empruntstable'))
 
     # Fetching abonnés and documents for the form
-    abonnes = list(db.abonne.find({}, {"_id": 0, "nom": 1, "prenom": 1}))
+    # abonnes = list(db.abonne.find({}, {"_id": 0, "nom": 1, "prenom": 1}))
+    abonnes = list(db.abonne.find({}, {"_id": 0, "email": 1}))
+
     documents = list(db.document.find({}, {"_id": 0, "titre": 1}))
     
     # Render 'emprunt.html' with data
@@ -303,7 +312,7 @@ def update_emprunt(reference):
     return redirect(url_for('empruntstable'))
 
     # Fetching abonnés and documents for the form
-    abonnes = list(db.abonne.find({}, {"_id": 0, "nom": 1, "prenom": 1}))
+    abonnes = list(db.abonne.find({}, {"_id": 0, "email": 1,}))
     documents = list(db.document.find({}, {"_id": 0, "titre": 1}))
     
     # Render 'emprunt.html' with data
@@ -330,21 +339,59 @@ def calendar_data():
 
 
 
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         email = request.form['email']
+#         password = request.form['password']
+        
+#         # Vérification des identifiants
+#         if email == correct_email and password == correct_password:
+#             return redirect(url_for('home'))  # Redirection vers la page d'accueil
+#         else:
+#             return render_template('login.html', error="Identifiants incorrects.")  # Afficher un message d'erreur
+
+#     return render_template('login.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        
-        # Vérification des identifiants
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check if the email matches static credentials
         if email == correct_email and password == correct_password:
-            return redirect(url_for('home'))  # Redirection vers la page d'accueil
-        else:
-            return render_template('login.html', error="Identifiants incorrects.")  # Afficher un message d'erreur
+            # Redirect to a static home page
+            return redirect(url_for('home'))
+
+        # Check if the abonné exists in MongoDB
+        abonne = abonnes_collection.find_one({"email": email})
+
+        if abonne and abonne['motdepasse'] == password:
+            # Redirect to a personalized page for the abonné
+            return redirect(url_for('abonne_home', email=email))
+
+        # Invalid credentials
+        return render_template('login.html', error="Identifiants incorrects.")
 
     return render_template('login.html')
 
-@app.route('/')
+
+@app.route('/abonne_home/<email>')
+def abonne_home(email):
+    # Fetch the abonné's data using their email
+    abonne = abonnes_collection.find_one({"email": email})
+
+    if not abonne:
+        return "Abonné non trouvé.", 404  # Abonné not found
+
+    # Fetch emprunts related to this abonné
+    emprunts = list(db.emprunt.find({"abonne": email}))
+
+    # Render the template with abonné and emprunt data
+    return render_template('abonne_home.html', abonne=abonne, emprunts=emprunts)
+
+
+@app.route('/home')
 def home():
     total_abonnes = db.abonne.count_documents({})
     total_documents = db.document.count_documents({})
@@ -426,6 +473,8 @@ def chart_data():
     data = [{"type": doc["_id"], "count": doc["count"]} for doc in document_types]
 
     return jsonify(data)
+
+
 
 @app.route('/api/loan_status_stats', methods=['GET'])
 def get_loan_status_stats():

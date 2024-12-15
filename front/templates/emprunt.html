@@ -57,7 +57,7 @@
 							<select id="abonne" name="abonne" required>
 								<option value="" disabled selected>Sélectionnez un abonné</option>
 								{% for abonne in abonnes %}
-									<option value="{{ abonne.nom }} {{ abonne.prenom }}">{{ abonne.nom }} {{ abonne.prenom }}</option>
+								<option value="{{ abonne.email }}">{{ abonne.email }}</option>
 								{% endfor %}
 							</select>
 						</div>

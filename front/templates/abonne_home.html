@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Abonné Home</title>
+</head>
+<body>
+    <h1>Bienvenue, {{ abonne['nom'] }} {{ abonne['prenom'] }}</h1>
+    <p>Email: {{ abonne['email'] }}</p>
+    <p>Adresse: {{ abonne['adresse'] }}</p>
+
+    <h2>Vos Emprunts</h2>
+    {% if emprunts %}
+        <table border="1">
+            <tr>
+                <th>Référence</th>
+                <th>Document Emprunté</th>
+                <th>Date d'emprunt</th>
+                <th>Date de retour</th>
+                <th>Status</th>
+            </tr>
+            {% for emprunt in emprunts %}
+            <tr>
+                <td>{{ emprunt['reference'] }}</td>
+                <td>{{ emprunt['documentemprunte'] }}</td>
+                <td>{{ emprunt['datedemprunt'] }}</td>
+                <td>{{ emprunt['datederetour'] }}</td>
+                <td>{{ emprunt['statusemprunt'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Aucun emprunt trouvé.</p>
+    {% endif %}
+</body>
+</html>

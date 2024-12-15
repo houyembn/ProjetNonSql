@@ -42,8 +42,9 @@
 								<th>Email</th>
 								<th>Adresse</th>
 								<th>Date d'inscription</th>
-                                <th>Liste d'Emprunts</th>
-                                <th>Historique d'Emprunts</th>
+                                <th>Mot de passe</th>
+                                <!-- <th>Liste d'Emprunts</th>
+                                <th>Historique d'Emprunts</th> -->
 								<th>Order</th>
 							</tr>
 						</thead>
@@ -56,8 +57,9 @@
 								<td>{{abonne.email}}</td>
                                 <td>{{abonne.adresse}}</td>
 								<td>{{abonne.datedinscription}}</td>
-                                <td>{{abonne.listedemprunts}}</td>
-                                <td>{{abonne.historiquedemprunts}}</td>
+                                <td>{{abonne.motdepasse}}</td>
+                                <!-- <td>{{abonne.listedemprunts}}</td>
+                                <td>{{abonne.historiquedemprunts}}</td> -->
 								<td>
 
 						<!-- Delete Form -->
@@ -77,11 +79,11 @@
     <button 
         class="btn btn-success btn-sm" 
         type="button" 
-        onclick="showUpdateForm('{{ abonne.id }}', '{{ abonne.nom }}', '{{ abonne.prenom }}', '{{ abonne.email }}', '{{ abonne.adresse }}', '{{ abonne.datedinscription }}', '{{ abonne.listedemprunts }}', '{{ abonne.historiquedemprunts }}')">
+        onclick="showUpdateForm('{{ abonne.id }}', '{{ abonne.nom }}', '{{ abonne.prenom }}', '{{ abonne.email }}', '{{ abonne.adresse }}', '{{ abonne.datedinscription }}', '{{ abonne.motdepasse }}')">
         <i class="fa fa-edit"></i>
     </button>
 </form>
-
+<!-- '{{ abonne.listedemprunts }}', '{{ abonne.historiquedemprunts }}' -->
 
 
 								</td>
@@ -127,7 +129,7 @@
 
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, listedemprunts, historiquedemprunts) {
+function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, motdepasse) {
     let formattedDate = new Date(datedinscription).toISOString().split('T')[0];
 
     Swal.fire({
@@ -151,12 +153,8 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
                     <input type="date" name="datedinscription" value="${formattedDate}" class="form-control">
                 </div>
                 <div class="form-group mb-3">
-                    <label for="listedemprunts">Liste d'Emprunts</label>
-                    <input type="text" name="listedemprunts" value="${listedemprunts}" class="form-control" placeholder="Liste d'Emprunts" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="historiquedemprunts">Historique d'Emprunts</label>
-                    <input type="text" name="historiquedemprunts" value="${historiquedemprunts}" class="form-control" placeholder="Historique d'Emprunts" required>
+                    <label for="motdepasse">Mot de passe</label>
+                    <input type="text" name="motdepasse" value="${motdepasse}" class="form-control" placeholder="Mot de passe" required>
                 </div>
                 <div style="justify-content: center; margin-top: 20px;">
                     <button type="submit" class="btn btn-primary">Mettre à jour</button>
@@ -171,7 +169,14 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
     });
 }
 
-
+// <div class="form-group mb-3">
+//                     <label for="listedemprunts">Liste d'Emprunts</label>
+//                     <input type="text" name="listedemprunts" value="${listedemprunts}" class="form-control" placeholder="Liste d'Emprunts" required>
+//                 </div>
+//                 <div class="form-group mb-3">
+//                     <label for="historiquedemprunts">Historique d'Emprunts</label>
+//                     <input type="text" name="historiquedemprunts" value="${historiquedemprunts}" class="form-control" placeholder="Historique d'Emprunts" required>
+//                 </div>
 
 
 
@@ -215,8 +220,8 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
             const emailCell = row.cells[1].textContent.toLowerCase();
             const adresseCell = row.cells[2].textContent.toLowerCase();
             const dateCell = row.cells[3].textContent.trim();
-            const listedempruntsCell = row.cells[4].textContent.toLowerCase();
-            const historiquedempruntsCell = row.cells[5].textContent.toLowerCase();
+            // const listedempruntsCell = row.cells[4].textContent.toLowerCase();
+            // const historiquedempruntsCell = row.cells[5].textContent.toLowerCase();
 
             // Filter by name
             const matchesName = nameCell.includes(searchName);
@@ -224,20 +229,21 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, liste
             // Filter by email, adresse, listedemprunts, historiquedemprunts
             const matchesEmail = emailCell.includes(searchName);
             const matchesAdresse = adresseCell.includes(searchName);
-            const matchesListedemprunts = listedempruntsCell.includes(searchName);
-            const matchesHistoriquedemprunts = historiquedempruntsCell.includes(searchName);
+            // const matchesListedemprunts = listedempruntsCell.includes(searchName);
+            // const matchesHistoriquedemprunts = historiquedempruntsCell.includes(searchName);
 
             // Filter by date (if a date is provided in the search)
             const matchesDate = searchDate ? dateCell.includes(searchDate) : true;
 
             // Display or hide the row based on the filters
-            if ((matchesName || matchesEmail || matchesAdresse || matchesListedemprunts || matchesHistoriquedemprunts) && matchesDate) {
+            if ((matchesName || matchesEmail || matchesAdresse ) && matchesDate) {    
                 row.style.display = "";
             } else {
                 row.style.display = "none";
             }
         }
     }
+    // || matchesListedemprunts || matchesHistoriquedemprunts
 </script>
 	
 </body>
