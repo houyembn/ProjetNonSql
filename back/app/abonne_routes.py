@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from pymongo import MongoClient
 from datetime import datetime
 
@@ -6,9 +6,13 @@ from datetime import datetime
 client = MongoClient("mongodb://localhost:27017/")
 db = client["gestionabonnee"]
 
+# Flask App Instance
+app = Flask(__name__)
 
+# Define Blueprint
 abonne_bp = Blueprint('abonne', __name__)
 
+# Routes
 @abonne_bp.route('/abonne', methods=['GET'])
 def get_abonnes():
     nom = request.args.get('nom')  # Optional filter for 'nom'
@@ -27,7 +31,6 @@ def get_abonnes():
     return jsonify(abonnes), 200
 
 
-
 # Route to update an abonne by email
 @abonne_bp.route('/abonne/<email>', methods=['PUT'])
 def update_abonne(email):
@@ -36,12 +39,12 @@ def update_abonne(email):
     return jsonify({"message": "Abonné mis à jour avec succès !"}), 200
 
 # Route to delete an abonne by email
-@abonne_bp.route('/abonne/<email>', methods=['DELETE'])
+@abonne_bp.route('/deleteabonne/<email>', methods=['DELETE'])
 def delete_abonne(email):
     db.abonne.delete_one({"email": email})
     return jsonify({"message": "Abonné supprimé avec succès !"}), 200
 
-@abonne_bp.route('/abonne', methods=['POST'])
+@abonne_bp.route('/addabonne', methods=['POST'])
 def create_abonne():
     # Get the JSON data from the request
     data = request.json
@@ -51,9 +54,7 @@ def create_abonne():
     prenom = data.get('prenom')
     email = data.get('email')
     adresse = data.get('adresse')
-    datedinscription = data.get('datedinscription') 
-    historiquedemprunts = data.get('historiquedemprunts')
-    listedemprunts = data.get('listedemprunts')
+    datedinscription = data.get('dateinscription') 
 
     # Check if required fields are provided
     if not nom or not prenom or not email:
@@ -72,9 +73,7 @@ def create_abonne():
         "prenom": prenom,
         "email": email,
         "adresse": adresse,
-        "datedinscription": datedinscription,
-        "historiquedemprunts": historiquedemprunts,
-        "listedemprunts": listedemprunts
+        "date_inscription": datedinscription,
     }
 
     # Insert into the MongoDB collection
@@ -84,10 +83,8 @@ def create_abonne():
     return jsonify({"message": "Abonné créé avec succès !"}), 201
 
 
-@app.route('/AbonneeEmails')
-def abonnees_emails():
-    emails = list(db.abonne.find({}, {"_id": 0, "email": 1}))  
-    email_list = [email['email'] for email in emails]
-    print("Emails récupérés :", email_list)  # Afficher dans la console
-    return render_template('emprunt.html', emails=email_list)
+# Register the Blueprint with the Flask app
+app.register_blueprint(abonne_bp)
 
+if __name__ == "__main__":
+    app.run(debug=True)

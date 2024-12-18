@@ -417,6 +417,7 @@ def home():
     total_emprunts = db.emprunt.count_documents({})
     return render_template('index.html', total_abonnes=total_abonnes, total_documents=total_documents,total_emprunts=total_emprunts)
 
+
 @app.route('/Calender')
 def Calender():
     return render_template('calender.html')
