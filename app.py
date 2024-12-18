@@ -29,6 +29,11 @@ def create_abonne():
     if not nom or not prenom or not email:
         return jsonify({"error": "Nom, prénom, and email are required fields."}), 400
 
+    existing_abonne = db.abonne.find_one({"email": email})
+    if existing_abonne:
+        return jsonify({"error": "This email is already registered."}), 400 
+        
+
     # If 'datedinscription' is provided, ensure it's a valid date
     if datedinscription:
         try:
@@ -54,6 +59,20 @@ def create_abonne():
     # Return a success message
     return redirect(url_for('abonneestable'))
 
+@app.route('/check_email', methods=['GET'])
+def check_email():
+    email = request.args.get('email')
+    
+    if not email:
+        return jsonify({"error": "Email is required."}), 400
+    
+    # Check if the email already exists in the database
+    existing_abonne = db.abonne.find_one({"email": email})
+    
+    if existing_abonne:
+        return jsonify({"exists": True})  # Email already exists
+    else:
+        return jsonify({"exists": False})  # Email does not exist
 
 
 # @app.route('/emprunt', methods=['GET', 'POST'])

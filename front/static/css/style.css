@@ -598,6 +598,7 @@ body {
 
 .form-group {
     margin-bottom: 20px;
+	
 }
 
 .form-group label {
@@ -607,10 +608,18 @@ body {
 }
 
 .form-group input {
+	height: 35px;
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
     margin-top: 5px;
+}
+.form-group input[type="radio"] {
+    height: 25px;  /* Remove fixed height */
+    width: 25px;   /* Remove fixed width */
+    padding: 0;    /* Remove padding */
+    margin-top: -30px; /* Adjust margin if needed */
+    vertical-align: middle; /* Align radio buttons properly */
 }
 
 .form-group select {
@@ -664,6 +673,23 @@ button:hover {
     padding: 20px;
     background-color: #f5f5f5;
     border-radius: 8px;
+}
+
+#toggle-password-visibility {
+	margin-top: -30px;
+    margin-left: 380px;
+    border-radius: 0.25rem;
+    display: inline-block;
+}
+
+.custom-button-color {
+    background-color: #63C5DA; /* Custom background color */
+    color: white; /* Text color */
+    border: none; /* Optional, to remove border */
+}
+
+.custom-button-color:hover {
+    background-color: #0492C2; /* Darker background on hover */
 }
 
 

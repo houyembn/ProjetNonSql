@@ -57,7 +57,7 @@
 								<td>{{abonne.email}}</td>
                                 <td>{{abonne.adresse}}</td>
 								<td>{{abonne.datedinscription}}</td>
-                                <td>{{abonne.motdepasse}}</td>
+                                <td>{{ '*' * abonne.motdepasse|length }}</td>
                                 <!-- <td>{{abonne.listedemprunts}}</td>
                                 <td>{{abonne.historiquedemprunts}}</td> -->
 								<td>
@@ -131,6 +131,7 @@
 <script>
 function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, motdepasse) {
     let formattedDate = new Date(datedinscription).toISOString().split('T')[0];
+    let maskedPassword = '*'.repeat(motdepasse.length);
 
     Swal.fire({
         title: '<h3 style="color: #3C91E6; margin-bottom: 20px;">Modifier Abonné</h3>',
@@ -153,9 +154,16 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, motde
                     <input type="date" name="datedinscription" value="${formattedDate}" class="form-control">
                 </div>
                 <div class="form-group mb-3">
-                    <label for="motdepasse">Mot de passe</label>
-                    <input type="text" name="motdepasse" value="${motdepasse}" class="form-control" placeholder="Mot de passe" required>
-                </div>
+    <label for="motdepasse">Mot de passe</label>
+    <div class="d-flex align-items-center">
+        <input type="password" id="password-field" name="motdepasse" value="${maskedPassword}" 
+               class="form-control me-2" placeholder="Mot de passe" required>
+        <button type="button" id="toggle-password-visibility" class="btn custom-button-color">
+            <i class="fas fa-eye"></i>
+        </button>
+    </div>
+</div>
+
                 <div style="justify-content: center; margin-top: 20px;">
                     <button type="submit" class="btn btn-primary">Mettre à jour</button>
                 </div>
@@ -165,9 +173,34 @@ function showUpdateForm(id, nom, prenom, email, adresse, datedinscription, motde
         customClass: {
             popup: 'swal2-popup-custom',
         },
-		showCloseButton: true,
+        showCloseButton: true,
+        didOpen: () => {
+            const toggleButton = document.getElementById('toggle-password-visibility');
+            const passwordField = document.getElementById('password-field');
+            let isMasked = true;
+
+            toggleButton.addEventListener('click', () => {
+                isMasked = !isMasked;
+                passwordField.type = isMasked ? 'password' : 'text';
+                toggleButton.innerHTML = `<i class="fas ${isMasked ? 'fa-eye' : 'fa-eye-slash'}"></i>`;
+                if (isMasked) {
+                    passwordField.value = '*'.repeat(motdepasse.length); // Reset to asterisks
+                } else {
+                    passwordField.value = motdepasse; // Show the actual password
+                }
+            });
+
+            passwordField.addEventListener('focus', () => {
+                if (isMasked) passwordField.value = '';
+            });
+
+            passwordField.addEventListener('blur', () => {
+                if (isMasked && passwordField.value === '') passwordField.value = '*'.repeat(motdepasse.length);
+            });
+        },
     });
 }
+
 
 // <div class="form-group mb-3">
 //                     <label for="listedemprunts">Liste d'Emprunts</label>

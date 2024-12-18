@@ -42,8 +42,9 @@
 						</div>
 						<div class="form-group">
 							<label for="motdepasse">Mot de passe</label>
-							<input type="text" id="motdepasse" placeholder="Mot de passe" name="motdepasse" required>
+							<input type="password" id="motdepasse" placeholder="Mot de passe" name="motdepasse" required>
 						</div>
+						
 						<!-- <div class="form-group">
 							<label for="listedemprunts">Liste d'Emprunts</label>
 							<input type="text" id="listedemprunts" placeholder="Liste d'Emprunts" name="listedemprunts" required>
@@ -55,9 +56,49 @@
 						<button type="submit">Ajouter</button>
 					</form>
 				</div>
+				<script>
+					document.getElementById('abonneForm').addEventListener('submit', function(e) {
+						const email = document.getElementById('email').value;
+						const motdepasse = document.getElementById('motdepasse').value;
 				
-					
-
+						// Email validation (basic format check)
+						const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
+						if (!emailRegex.test(email)) {
+							alert('Please enter a valid email address.');
+							e.preventDefault();  // Prevent form submission
+							return;
+						}
+				
+						// Check if the email already exists in the database
+						fetch(`/check_email?email=${encodeURIComponent(email)}`)
+							.then(response => response.json())
+							.then(data => {
+								if (data.exists) {
+									alert('This email is already registered. Please use a different one.');
+									e.preventDefault();  // Prevent form submission
+									return;
+								}
+				
+								// Password validation (at least 6 characters, contains letters and numbers)
+								const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{6,}$/;
+								if (!passwordRegex.test(motdepasse)) {
+									alert('Password must be at least 6 characters long and contain both letters and numbers.');
+									e.preventDefault();  // Prevent form submission
+									return;
+								}
+				
+								// If everything is valid, allow form submission
+							})
+							.catch(error => {
+								alert('Error checking email. Please try again.');
+								e.preventDefault();  // Prevent form submission in case of error
+							});
+						
+						// Prevent the form from submitting immediately and only submit after validation
+						e.preventDefault();
+					});
+				</script>
+				
 				
 				<!-- <div class="todo">
 					<div class="head">
