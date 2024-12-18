@@ -1,36 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Abonné Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+  <title>Service Invoicing Details</title>
+  <style>
+/* NAVBAR */
+#content nav {
+    width: 96.85%; /* Ensure the navbar stretches across the full page width */
+    height: 56px;
+    background: white; /* Set the navbar background color to white */
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ensures space between left and right content */
+    grid-gap: 24px;
+    font-family: var(--lato);
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add a shadow for depth */
+}
+
+/* Rest of your existing navbar styles remain the same */
+#content nav .right-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+}
+
+#content nav a.profile img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#content nav::before {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    bottom: -40px;
+    left: 0;
+    border-radius: 50%;
+    box-shadow: -20px -20px 0 var(--light);
+}
+
+#content nav a {
+    color: var(--dark);
+}
+
+#content nav .bx.bx-menu {
+    cursor: pointer;
+    color: var(--dark);
+}
+
+#content nav .nav-link {
+    font-size: 16px;
+    transition: .3s ease;
+}
+
+#content nav .nav-link:hover {
+    color: var(--blue);
+}
+
+#content nav form {
+    max-width: 400px;
+    width: 100%;
+    margin-right: auto;
+}
+
+#content nav form .form-input {
+    display: flex;
+    align-items: center;
+    height: 36px;
+}
+
+#content nav form .form-input input {
+    flex-grow: 1;
+    padding: 0 16px;
+    height: 100%;
+    border: none;
+    background: var(--grey);
+    border-radius: 36px 0 0 36px;
+    outline: none;
+    width: 100%;
+    color: var(--dark);
+}
+
+#content nav form .form-input button {
+    width: 36px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--blue);
+    color: var(--light);
+    font-size: 18px;
+    border: none;
+    outline: none;
+    border-radius: 0 36px 36px 0;
+    cursor: pointer;
+}
+
+#content nav .notification {
+    font-size: 20px;
+    position: relative;
+}
+
+#content nav .notification .num {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--light);
+    background: var(--red);
+    color: var(--light);
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 40px 0;
+    }
+
+    .card-container {
+      width: 100%;
+      box-shadow: 0 4px 8px rgba(0.1, 0.1, 0.1, 0.1);
+      padding: 20px 30px 40px 50px;
+      background-color: white;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+
+    h1.display {
+      font-size: 2rem;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .title {
+      display: block;
+      width: 100%;
+      border-bottom: 2px solid #ccc;
+      font-size: 17px;
+      font-weight: bold;
+      padding: 5px 0;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .custom-label {
+      color: #696666;
+      font-style: italic;
+      margin-top: 0.5%;
+    }
+
+    .card-text {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+  </style>
 </head>
 <body>
-    <h1>Bienvenue, {{ abonne['nom'] }} {{ abonne['prenom'] }}</h1>
-    <p>Email: {{ abonne['email'] }}</p>
-    <p>Adresse: {{ abonne['adresse'] }}</p>
+    <section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu'></i>
+			<div class="right-nav">
+                <input type="checkbox" id="switch-mode" hidden>
+                <label for="switch-mode" class="switch-mode"></label>              
+			  <a href="#" class="profile">
+				<img src="data:image/jpeg;base64,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">
+			  </a>
+            </div>
+		</nav>
+    </section>
+  <div class="container">
+    <h1 class="display">Bienvenue {{ abonne['nom'] }} {{ abonne['prenom'] }}</h1>
 
-    <h2>Vos Emprunts</h2>
-    {% if emprunts %}
-        <table border="1">
-            <tr>
-                <th>Référence</th>
-                <th>Document Emprunté</th>
-                <th>Date d'emprunt</th>
-                <th>Date de retour</th>
-                <th>Status</th>
-            </tr>
-            {% for emprunt in emprunts %}
-            <tr>
-                <td>{{ emprunt['reference'] }}</td>
-                <td>{{ emprunt['documentemprunte'] }}</td>
-                <td>{{ emprunt['datedemprunt'] }}</td>
-                <td>{{ emprunt['datederetour'] }}</td>
-                <td>{{ emprunt['statusemprunt'] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>Aucun emprunt trouvé.</p>
-    {% endif %}
+    <div class="card-container">
+      <div class="card-body">
+        <h2 class="title">Vos Informations:</h2>
+
+        <div class="row">
+          <div class="col">
+            <span class="custom-label">Email:</span>
+            <span class="card-text">{{ abonne['email'] }}</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <span class="custom-label">Adresse:</span>
+            <span class="card-text">{{ abonne['adresse'] }}</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <span class="custom-label">Date d'inscription:</span>
+            <span class="card-text">{{ abonne['datedinscription'] }}</span>
+          </div>
+        </div>
+
+        <h2 class="title">Vos Emprunts:</h2>
+          {% if emprunts %}
+          {% for emprunt in emprunts %}
+          <div class="row">
+            <div class="col">
+              <span class="custom-label">Référence:</span>
+              <span class="card-text">{{ emprunt['reference'] }}</span>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col">
+              <span class="custom-label">Document Emprunté:</span>
+              <span class="card-text">{{ emprunt['documentemprunte'] }}</span>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col">
+              <span class="custom-label">Date d'emprunt:</span>
+              <span class="card-text">{{ emprunt['datedemprunt'] }}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <span class="custom-label">Date de retour:</span>
+              <span class="card-text">{{ emprunt['datederetour'] }}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <span class="custom-label">Status:</span>
+              <span class="card-text">{{ emprunt['statusemprunt'] }}</span>
+            </div>
+          </div>
+          {% endfor %}
+            {% else %}
+                <p class="no-emprunts">Aucun emprunt trouvé.</p>
+            {% endif %}
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
