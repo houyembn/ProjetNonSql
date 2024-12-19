@@ -281,6 +281,7 @@
   color: #721c24;
 }
 
+.modal { display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ } .modal-content { background-color: #fefefe; margin: 15% auto; /* 15% from the top and centered */ padding: 20px; border: 1px solid #888; width: 80%; /* Could be more or less, depending on screen size */ border-radius: 10px; } .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; } .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -300,6 +301,15 @@
       </div>
     </nav>
   </section>
+
+  <!-- Add this modal HTML near the end of your body -->
+<div id="notificationModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <p id="notificationMessage"></p>
+  </div>
+</div>
+
   
   <div class="container">
     <h1 class="display">Bienvenue {{ abonne['nom'] }} {{ abonne['prenom'] }}</h1>
@@ -356,7 +366,79 @@
 {% else %}
   <p class="no-emprunts">Aucun emprunt trouvé.</p>
 {% endif %}
-       
+
+<p id="retardedCount" class="alert alert-danger"></p>
+
+<script>
+  function countRetardedEmprunts() {
+    let count = 0;
+    const rows = document.querySelectorAll('.emprunts-table tbody tr');
+
+    rows.forEach(row => {
+      const statusCell = row.querySelector('td:last-child').innerText.trim();
+      if (statusCell.toLowerCase() === 'retardé') {
+        count++;
+      }
+    });
+
+    // Display the count in the <p> element
+    document.getElementById('retardedCount').innerText = `Nombre d'emprunts retardés: ${count}`;
+  }
+
+  // Call the function to display the result
+  countRetardedEmprunts();
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function showNotification(message) {
+      const modal = document.getElementById('notificationModal');
+      const modalMessage = document.getElementById('notificationMessage');
+      const closeButton = document.querySelector('.close-button');
+  
+      modalMessage.innerText = message;
+      modal.style.display = 'block';
+  
+      closeButton.onclick = function() {
+        modal.style.display = 'none';
+      };
+  
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      };
+    }
+  
+    function checkEmprunts() {
+      const rows = document.querySelectorAll('.emprunts-table tbody tr');
+      let notificationMessage = '';
+  
+      rows.forEach(row => {
+        const returnDateCell = row.querySelector('td:nth-child(4)').innerText.trim();
+        const statusCell = row.querySelector('td:nth-child(5)').innerText.trim();
+  
+        const returnDate = new Date(returnDateCell);
+        const today = new Date();
+        const differenceInTime = returnDate.getTime() - today.getTime();
+        const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+  
+        if (statusCell.toLowerCase() !== 'retourné' && differenceInDays <= 3 && differenceInDays >= 0) {
+          notificationMessage += `L'emprunt du document '${row.querySelector('td:nth-child(2)').innerText.trim()}' doit être retourné dans ${Math.ceil(differenceInDays)} jour(s).\n`;
+        }
+      });
+  
+      if (notificationMessage) {
+        showNotification(notificationMessage);
+      }
+    }
+  
+    // Call the checkEmprunts function when the page loads
+    checkEmprunts();
+  });
+  </script>
+  
+
       </div>
     </div>
   </div>
